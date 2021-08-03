@@ -11,7 +11,10 @@ const ImageGridItem = (props) => {
   const imageUrl = pathToUrl(imagePath);
 
   useDoubleClick({
-    onSingleClick: () => {},
+    onSingleClick: () => {
+      if (props.onClick) props.onClick(imagePath);
+      log(`click ${imagePath}`);
+    },
     onDoubleClick: () => {
       window.open(imagePath);
     },

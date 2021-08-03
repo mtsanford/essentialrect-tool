@@ -12,6 +12,7 @@ import './App.global.css';
 import './App.global.scss';
 
 export default function App() {
+  const [selectedImage, setSelectedImage] = useState("D:/Media/China2015/20150210_014858.jpg");
   const [imageFolder, setImageFolderState] = useState(
     localStorage.getItem('imageFolder') || '/'
   );
@@ -43,10 +44,14 @@ export default function App() {
     return () => window.removeEventListener('keydown', keydownListener);
   }, []);
 
+  const picSelectedHandler = (filePath) => {
+    setSelectedImage(filePath);
+  }
+
   return (
     <SplitterLayout>
-      <RandomImages picFolder={imageFolder} />
-      <ImageViewer imagePath="D:/Media/China2015/20150210_014858.jpg" />
+      <RandomImages picFolder={imageFolder} onSelectImage={picSelectedHandler} />
+      <ImageViewer imagePath={selectedImage} />
     </SplitterLayout>
   );
 }
