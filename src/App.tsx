@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ipcRenderer } from 'electron';
 
+import SplitterLayout from 'react-splitter-layout';
+
 import log from './lib/log';
 
 import RandomImages from './components/RandomImages';
@@ -9,7 +11,7 @@ import './App.global.css';
 import './App.global.scss';
 
 export default function App() {
-  const [imageFolder, _setImageFolder] = useState(
+  const [imageFolder, setImageFolderState] = useState(
     localStorage.getItem('imageFolder') || '/'
   );
 
@@ -19,7 +21,7 @@ export default function App() {
   const imageFolderRef = useRef(imageFolder);
   const setImageFolder = (val) => {
     imageFolderRef.current = val;
-    _setImageFolder(val);
+    setImageFolderState(val);
   };
 
   useEffect(() => {
@@ -40,5 +42,10 @@ export default function App() {
     return () => window.removeEventListener('keydown', keydownListener);
   }, []);
 
-  return <RandomImages picFolder={imageFolder} />;
+  return (
+    <SplitterLayout>
+      <RandomImages picFolder={imageFolder} />
+      <div className="rightpane">hi</div>
+    </SplitterLayout>
+  );
 }
