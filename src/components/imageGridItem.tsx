@@ -1,18 +1,14 @@
 import React, { useRef } from 'react';
 import useDoubleClick from 'use-double-click';
 import { ipcRenderer } from 'electron';
+import { pathToUrl } from '../lib/util';
 
 import log from '../lib/log';
 
-const ebs = /\\/g;
-
-const ImageGridItem = ({ imagePath }) => {
+const ImageGridItem = (props) => {
   const imageRef = useRef();
-
-  const imageUrl = `atom://${encodeURIComponent(imagePath).replace(
-    ebs,
-    '\\\\'
-  )}`;
+  const { imagePath } = props;
+  const imageUrl = pathToUrl(imagePath);
 
   useDoubleClick({
     onSingleClick: () => {},
@@ -23,7 +19,7 @@ const ImageGridItem = ({ imagePath }) => {
   });
 
   const dragStartHandler = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     ipcRenderer.send('ondragstart', imagePath);
   };
 
