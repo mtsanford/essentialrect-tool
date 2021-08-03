@@ -6,6 +6,7 @@ import SplitterLayout from 'react-splitter-layout';
 import log from './lib/log';
 
 import RandomImages from './components/RandomImages';
+import ImageViewer from './components/ImageViewer';
 
 import './App.global.css';
 import './App.global.scss';
@@ -45,7 +46,7 @@ export default function App() {
   return (
     <SplitterLayout>
       <RandomImages picFolder={imageFolder} />
-      <div className="rightpane">hi</div>
+      <ImageViewer imagePath="D:/Media/China2015/20150210_014858.jpg" />
     </SplitterLayout>
   );
 }
