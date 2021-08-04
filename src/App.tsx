@@ -47,17 +47,10 @@ export default function App() {
     return () => window.removeEventListener('keydown', keydownListener);
   }, []);
 
-  const picSelectedHandler = (filePath) => {
-    setSelectedImage(filePath);
-  };
-
   return (
     <CurrentImageProvider>
       <SplitterLayout>
-        <RandomImages
-          picFolder={imageFolder}
-          onSelectImage={picSelectedHandler}
-        />
+        <RandomImages picFolder={imageFolder} />
         <ImageViewer imagePath={selectedImage} />
       </SplitterLayout>
     </CurrentImageProvider>

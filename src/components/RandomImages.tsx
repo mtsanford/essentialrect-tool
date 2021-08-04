@@ -18,7 +18,7 @@ const imagePathsFromDir = (folder, paths) => {
     .map((fileName: string) => path.join(folder, fileName).toString());
 };
 
-const RandomImages = ({ picFolder, onSelectImage }) => {
+const RandomImages = ({ picFolder }) => {
   const [{ fullList: imageFiles, currentBunch: imageBunch }, dispatchList] = useListReducer(16);
 
   useEffect(() => {
@@ -61,15 +61,11 @@ const RandomImages = ({ picFolder, onSelectImage }) => {
     };
   }, [picFolder]);
 
-  const selectImageHandler = (imagePath) => {
-    onSelectImage(imagePath);
-  }
-
   if (!imageBunch || imageBunch.length === 0 || imageFiles.length === 0) {
     return <div className="randomimages-no-images">No images found</div>;
   }
 
-  return <ImageGrid images={imageBunch} onSelectImage={selectImageHandler} />;
+  return <ImageGrid images={imageBunch} />;
 };
 
 export default RandomImages;
