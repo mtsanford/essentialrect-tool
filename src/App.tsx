@@ -7,12 +7,15 @@ import log from './lib/log';
 
 import RandomImages from './components/RandomImages';
 import ImageViewer from './components/ImageViewer';
+import CurrentImageProvider from './store/CurrentImageProvider';
 
 import './App.global.css';
 import './App.global.scss';
 
 export default function App() {
-  const [selectedImage, setSelectedImage] = useState("D:/Media/China2015/20150210_014858.jpg");
+  const [selectedImage, setSelectedImage] = useState(
+    'D:/Media/China2015/20150210_014858.jpg'
+  );
   const [imageFolder, setImageFolderState] = useState(
     localStorage.getItem('imageFolder') || '/'
   );
@@ -46,12 +49,17 @@ export default function App() {
 
   const picSelectedHandler = (filePath) => {
     setSelectedImage(filePath);
-  }
+  };
 
   return (
-    <SplitterLayout>
-      <RandomImages picFolder={imageFolder} onSelectImage={picSelectedHandler} />
-      <ImageViewer imagePath={selectedImage} />
-    </SplitterLayout>
+    <CurrentImageProvider>
+      <SplitterLayout>
+        <RandomImages
+          picFolder={imageFolder}
+          onSelectImage={picSelectedHandler}
+        />
+        <ImageViewer imagePath={selectedImage} />
+      </SplitterLayout>
+    </CurrentImageProvider>
   );
 }

@@ -1,14 +1,17 @@
-import React, { useRef } from 'react';
+import React, { useContext } from 'react';
 import { pathToUrl } from '../lib/util';
 
+
+import CurrentImageContext from '../store/current-image-context';
+
+
 const ImageViewer = (props) => {
-  const imageRef = useRef();
-  const { imagePath } = props;
+  const currentImageContext = useContext(CurrentImageContext);
+  const imagePath = currentImageContext.filePath;
   const imageUrl = pathToUrl(imagePath);
 
   return (
     <div
-      ref={imageRef}
       className="image-viewer"
       style={{ backgroundImage: `url(${imageUrl})` }}
     />

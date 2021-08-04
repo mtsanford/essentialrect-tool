@@ -1,37 +1,26 @@
-import { useReducer } from 'react';
+import React, { useState } from 'react';
 
-import CartContext from './current-image-context';
+import CurrentImageContext from './current-image-context';
 
-const defaultState = null;
+const defaultState = 'D:/Media/China2015/20150210_014858.jpg';
 
+const CurrentImageProvider = (props) => {
+  const [currentImagePath, setCurrentImagePath] = useState(defaultState);
 
-
-const CartProvider = (props) => {
-  const [cartState, dispatchCartAction] = useReducer(
-    cartReducer,
-    defaultCartState
-  );
-
-  const addItemToCartHandler = (item) => {
-    dispatchCartAction({ type: 'ADD', item: item });
-  };
-
-  const removeItemFromCartHandler = (id) => {
-    dispatchCartAction({ type: 'REMOVE', id: id });
-  };
-
-  const cartContext = {
-    items: cartState.items,
-    totalAmount: cartState.totalAmount,
-    addItem: addItemToCartHandler,
-    removeItem: removeItemFromCartHandler,
+  const setFilePath = (path) => {
+    setCurrentImagePath(path);
   };
 
   return (
-    <CartContext.Provider value={cartContext}>
+    <CurrentImageContext.Provider
+      value={{
+        filePath: currentImagePath,
+        setFilePath: setFilePath,
+      }}
+    >
       {props.children}
-    </CartContext.Provider>
+    </CurrentImageContext.Provider>
   );
 };
 
-export default CartProvider;
+export default CurrentImageProvider;

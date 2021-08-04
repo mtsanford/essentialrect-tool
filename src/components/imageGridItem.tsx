@@ -1,18 +1,23 @@
-import React, { useRef } from 'react';
+import React, { useRef, useContext } from 'react';
 import useDoubleClick from 'use-double-click';
 import { ipcRenderer } from 'electron';
 import { pathToUrl } from '../lib/util';
 
 import log from '../lib/log';
 
+import CurrentImageContext from '../store/current-image-context';
+
 const ImageGridItem = (props) => {
   const imageRef = useRef();
   const { imagePath } = props;
   const imageUrl = pathToUrl(imagePath);
 
+  const currentImageContext = useContext(CurrentImageContext);
+
   useDoubleClick({
     onSingleClick: () => {
-      if (props.onClick) props.onClick(imagePath);
+      // if (props.onClick) props.onClick(imagePath);
+      currentImageContext.setFilePath(imagePath);
       log(`click ${imagePath}`);
     },
     onDoubleClick: () => {

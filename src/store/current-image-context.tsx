@@ -1,8 +1,8 @@
 import React from 'react';
 
 const CurrentImageContext = React.createContext({
-  path: [],
-  setFilePath: (path) => {},
+  filePath: null,
+  setFilePath: (path) => {}
 });
 
 export default CurrentImageContext;
