@@ -3,13 +3,14 @@ import { isAbsolute } from 'path';
 import React, { useContext, useEffect, useReducer } from 'react';
 // import { Fragment } from 'react';
 import { useImmerReducer } from 'use-immer';
+import { current } from 'immer';
 import { pathToUrl } from '../lib/util';
 
 import CurrentImageContext from '../store/current-image-context';
 
 const imagePositionDefault = {
   dragging: false,
-  mouseDownPos: {
+  lastMousePos: {
     x: 0,
     y: 0,
   },
@@ -25,19 +26,33 @@ const imagePositionDefault = {
   },
 };
 
+// IMPORTANT: Using immer!
 const imagePositionReducer = (state, action) => {
-  if (action.type === 'clientSet') {
-    return state;
-  }
   if (action.type === 'mouseDown') {
-    console.log(action.payload);
-    return state;
+    state.lastMousePos = action.payload.pos;
+    state.dragging = true;
+    return;
   }
   if (action.type === 'mouseMove') {
-    return state;
+    if (state.dragging) {
+      state.imageOffset = {
+        x: state.imageOffset.x + action.payload.pos.x - state.lastMousePos.x,
+        y: state.imageOffset.y + action.payload.pos.y - state.lastMousePos.y,
+      };
+      state.lastMousePos = action.payload.pos;
+    }
+    return;
   }
   if (action.type === 'mouseUp') {
-    return state;
+    if (state.dragging) {
+      state.imageOffset = {
+        x: state.imageOffset.x + action.payload.pos.x - state.lastMousePos.x,
+        y: state.imageOffset.y + action.payload.pos.y - state.lastMousePos.y,
+      };
+      state.dragging = false;
+    }
+    // console.log(current(state));
+    return;
   }
   return state;
 };
@@ -60,7 +75,8 @@ const ImageViewer = (props) => {
   const imageStyles = {
     position: 'absolute',
     width: '200px',
-    left: '200px',
+    left: `${positionState.imageOffset.x}px`,
+    top: `${positionState.imageOffset.y}px`,
   };
 
   const mouseDownHandler = (event) => {
@@ -75,9 +91,29 @@ const ImageViewer = (props) => {
     });
   };
 
-  const mouseMoveHandler = (event) => {};
+  const mouseMoveHandler = (event) => {
+    const clientRect = event.target.getBoundingClientRect();
+    const pos = { x: event.clientX, y: event.clientY };
+    positionDispatch({
+      type: 'mouseMove',
+      payload: {
+        clientRect,
+        pos,
+      },
+    });
+  };
 
-  const mouseUpHander = (event) => {};
+  const mouseUpHander = (event) => {
+    const clientRect = event.target.getBoundingClientRect();
+    const pos = { x: event.clientX, y: event.clientY };
+    positionDispatch({
+      type: 'mouseUp',
+      payload: {
+        clientRect,
+        pos,
+      },
+    });
+  };
 
   return (
     <>
