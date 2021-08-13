@@ -77,7 +77,8 @@ const ImageViewer = (props) => {
     width: '200px',
     left: `${positionState.imageOffset.x}px`,
     top: `${positionState.imageOffset.y}px`,
-  };
+    pointerEvents: 'none',
+  }
 
   const mouseDownHandler = (event) => {
     const clientRect = event.target.getBoundingClientRect();
