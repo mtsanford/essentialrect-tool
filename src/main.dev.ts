@@ -11,7 +11,15 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow, shell, protocol, ipcMain, dialog } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  shell,
+  protocol,
+  ipcMain,
+  dialog,
+  nativeImage,
+} from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -159,4 +167,10 @@ ipcMain.on('select-dirs', (event, arg) => {
     properties: ['openDirectory'],
     defaultPath: path.normalize(arg.defaultPath),
   });
+});
+
+ipcMain.on('get-image-info', (event, filePath) => {
+  const image = nativeImage.createFromPath(filePath);
+  const size = image.getSize();
+  event.returnValue = { ...size };
 });

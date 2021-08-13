@@ -253,13 +253,15 @@
     "electron-log": "^4.2.4",
     "electron-updater": "^4.3.4",
     "history": "^5.0.0",
+    "immer": "^9.0.5",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
     "react-splitter-layout": "^4.0.0",
     "regenerator-runtime": "^0.13.5",
     "source-map-support": "^0.5.19",
-    "use-double-click": "^1.0.5"
+    "use-double-click": "^1.0.5",
+    "use-immer": "^0.6.0"
   },
   "devEngines": {
     "node": ">=10.x",
