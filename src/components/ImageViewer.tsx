@@ -78,7 +78,7 @@ const ImageViewer = (props) => {
     left: `${positionState.imageOffset.x}px`,
     top: `${positionState.imageOffset.y}px`,
     pointerEvents: 'none',
-  }
+  };
 
   const mouseDownHandler = (event) => {
     const clientRect = event.target.getBoundingClientRect();
@@ -117,18 +117,22 @@ const ImageViewer = (props) => {
   };
 
   return (
-    <>
+    <div className="image-viewer">
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
       <div
-        className="image-viewer"
+        className="image-viewer-overlay"
         onMouseDown={mouseDownHandler}
         onMouseMove={mouseMoveHandler}
         onMouseUp={mouseUpHander}
         // style={{ backgroundImage: `url(${imageUrl})` }}
-      >
-        <img src={imageUrl} alt="" style={imageStyles} />
-      </div>
-    </>
+      />
+      <img
+        className="image-viewer-image"
+        src={imageUrl}
+        alt=""
+        style={imageStyles}
+      />
+    </div>
   );
 };
 
