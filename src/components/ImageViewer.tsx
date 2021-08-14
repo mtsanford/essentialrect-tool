@@ -67,12 +67,6 @@ const imagePositionReducer = (state, action) => {
         width: Math.abs(mousePos.x - state.startMousePos.x),
         height: Math.abs(mousePos.y - state.startMousePos.y),
       };
-
-      // state.imageOffset = {
-      //   x: state.imageOffset.x + action.payload.pos.x - state.lastMousePos.x,
-      //   y: state.imageOffset.y + action.payload.pos.y - state.lastMousePos.y,
-      // };
-      // state.lastMousePos = mousePos;
     }
   }
 
@@ -81,15 +75,7 @@ const imagePositionReducer = (state, action) => {
   }
 
   if (action.type === 'mouseUp') {
-    // if (state.dragging) {
-    //   state.imageOffset = {
-    //     x: state.imageOffset.x + action.payload.pos.x - state.lastMousePos.x,
-    //     y: state.imageOffset.y + action.payload.pos.y - state.lastMousePos.y,
-    //   };
-    //   state.dragging = false;
-    // }
     state.dragging = false;
-    // console.log(current(state));
     return;
   }
   return state;
