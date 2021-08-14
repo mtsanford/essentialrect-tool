@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron';
-import React, { useContext, useEffect, useReducer } from 'react';
+import React, { useRef, useContext, useEffect, useReducer } from 'react';
 import { useImmerReducer } from 'use-immer';
 import { current } from 'immer';
 import { pathToUrl } from '../lib/util';
@@ -96,6 +96,7 @@ const imagePositionReducer = (state, action) => {
 };
 
 const ImageViewer = (props) => {
+  const imageViewerRef = useRef();
   const currentImageContext = useContext(CurrentImageContext);
   const imagePath = currentImageContext.filePath;
   const imageUrl = pathToUrl(imagePath);
@@ -111,7 +112,7 @@ const ImageViewer = (props) => {
   }, [imagePath]);
 
   const mouseDownHandler = (event) => {
-    const clientRect = event.target.getBoundingClientRect();
+    const clientRect = imageViewerRef.current.getBoundingClientRect();
     const mousePos = { x: event.clientX, y: event.clientY };
     positionDispatch({
       type: 'mouseDown',
@@ -123,7 +124,7 @@ const ImageViewer = (props) => {
   };
 
   const mouseMoveHandler = (event) => {
-    const clientRect = event.target.getBoundingClientRect();
+    const clientRect = imageViewerRef.current.getBoundingClientRect();
     const mousePos = { x: event.clientX, y: event.clientY };
     positionDispatch({
       type: 'mouseMove',
@@ -135,7 +136,7 @@ const ImageViewer = (props) => {
   };
 
   const mouseUpHander = (event) => {
-    const clientRect = event.target.getBoundingClientRect();
+    const clientRect = imageViewerRef.current.getBoundingClientRect();
     const mousePos = { x: event.clientX, y: event.clientY };
     positionDispatch({
       type: 'mouseUp',
@@ -165,7 +166,7 @@ const ImageViewer = (props) => {
   };
 
   return (
-    <div className="image-viewer">
+    <div className="image-viewer" ref={imageViewerRef}>
       <div className="image-viewer-select" style={selectStyles} />
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
       <div
