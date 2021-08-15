@@ -29,6 +29,25 @@ const imagePositionDefault = {
     width: 0,
     height: 0,
   },
+  imageRect: {
+    left: 0,
+    right: 0,
+    width: 0,
+    height: 0,
+  },
+  essentialImageRect: {
+    left: 0,
+    right: 0,
+    width: 0,
+    height: 0,
+  },
+  renderedImageRect: {
+    left: 0,
+    right: 0,
+    width: 0,
+    height: 0,
+  },
+
   imageOffset: {
     x: 0,
     y: 0,
@@ -43,6 +62,20 @@ const imagePositionReducer = (state, action) => {
       x: action.payload.mousePos.x - action.payload.clientRect.left,
       y: action.payload.mousePos.y - action.payload.clientRect.top,
     };
+  }
+
+  function calculateRenderedImageRect() {
+    // the essential rect needs to fit in client rect, so pick
+    // the smallest scale
+    const candidateScale1 = action.payload.clientRect.width / state.essentialImageRect.width;
+    const candidateScale2 = action.payload.clientRect.height / state.essentialImageRect.height;
+    const scale = Math.min(candidateScale1, candidateScale2);
+  }
+
+  if (action.type === 'init') {
+    state.imageRect = action.payload.imageRect;
+    state.essentialImageRect = action.payload.essentialImageRect;
+    calculateRenderedImageRect();
   }
 
   if (action.type === 'mouseDown') {
