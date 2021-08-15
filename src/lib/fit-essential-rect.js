@@ -74,7 +74,15 @@ export function fitRects(imageRect, essentialRect, clientRect) {
     );
   }
 
-  return fittedRect;
+  // @#%&! Jest thinks -0 and 0 are different numbers
+  const adjustedFittedRect = {
+    top: fittedRect.top + 0,
+    left: fittedRect.left + 0,
+    width: fittedRect.width + 0,
+    height: fittedRect.height + 0,
+  };
+
+  return adjustedFittedRect;
 }
 
 export default fitRects;
