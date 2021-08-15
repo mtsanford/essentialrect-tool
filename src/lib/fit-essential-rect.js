@@ -17,12 +17,64 @@ export function fitLines(a, e, b, v) {
   }
 
   if (v > i2) {
-    return a > b ? i2 - i : 0;
+    return a > b ? v - i : 0;
   }
 
-  return (v - i2) / 2;
+  return (v - e) / 2 - a;
 }
 
-export function fitRects() {}
+// Assume imageRect and clientRect are (left=0, top=0)
+// Return: fittedRect, which scales and translate the image, such that when
+// shown in clientRect, optimally shows the essentialRect of the image.
+export function fitRects(imageRect, essentialRect, clientRect) {
+  // How much do we have to scale image to fit essential part in client?
+  // We need to pick the smaller of these two
+  const hscale = clientRect.width / essentialRect.width;
+  const vscale = clientRect.height / essentialRect.height;
+  const scale = Math.min(hscale, vscale);
+
+  const scaledImageRect = {
+    left: 0,
+    top: 0,
+    width: imageRect.width * scale,
+    height: imageRect.height * scale,
+  };
+
+  const scaledEssentialRect = {
+    left: 0,
+    top: 0,
+    width: essentialRect.width * scale,
+    height: essentialRect.height * scale,
+  };
+
+  const fittedRect = {
+    width: imageRect.width * scale,
+    height: imageRect.width * scale,
+  };
+
+  if (vscale > hscale) {
+    // essentalRect width snuggly fits in client width
+    fittedRect.left = -scaledEssentialRect.left;
+    fittedRect.top = fitLines(
+      scaledEssentialRect.top,
+      scaledEssentialRect.height,
+      scaledImageRect.height -
+        (scaledEssentialRect.top + scaledEssentialRect.height),
+      clientRect.height
+    );
+  } else {
+    // essentalRect height snuggly fits in client height
+    fittedRect.top = -scaledEssentialRect.top;
+    fittedRect.left = fitLines(
+      scaledEssentialRect.left,
+      scaledEssentialRect.width,
+      scaledImageRect.width -
+        (scaledEssentialRect.left + scaledEssentialRect.width),
+      clientRect.width
+    );
+  }
+
+  return fittedRect;
+}
 
 export default fitRects;
