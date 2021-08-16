@@ -1,12 +1,9 @@
-import { ipcRenderer } from 'electron';
 import React, { useRef, useContext, useEffect, useReducer } from 'react';
 import { useImmerReducer } from 'use-immer';
-import { current } from 'immer';
+
 import { pathToUrl } from '../lib/util';
 import { fitRect, clientToImageRect } from '../lib/fit-essential-rect';
-
 import CurrentImageContext from '../store/current-image-context';
-import { Action } from 'history';
 
 const imagePositionDefault = {
   dragging: false,
@@ -171,29 +168,27 @@ const ImageViewer = (props) => {
     probeImage.src = imagePath;
   }, [imagePath]);
 
-  const resizeHandler = (entries) => {
-    // const clientRect = imageViewerRef.current.getBoundingClientRect();
-    const clientRect = {
-      left: 0,
-      top: 0,
-      width: entries[0].contentRect.width,
-      height: entries[0].contentRect.height,
-    };
-
-    positionDispatch({
-      type: 'resize',
-      payload: {
-        clientRect,
-      },
-    });
-  };
-
   useEffect(() => {
     const imageViewerElement = imageViewerRef.current;
+    const resizeHandler = (entries) => {
+      const clientRect = {
+        left: 0,
+        top: 0,
+        width: entries[0].contentRect.width,
+        height: entries[0].contentRect.height,
+      };
+
+      positionDispatch({
+        type: 'resize',
+        payload: {
+          clientRect,
+        },
+      });
+    };
     const ro = new ResizeObserver(resizeHandler);
     ro.observe(imageViewerElement);
     return () => ro.unobserve(imageViewerElement);
-  }, [imageViewerRef.current]);
+  }, []);
 
   const mouseDownHandler = (event) => {
     const clientRect = imageViewerRef.current.getBoundingClientRect();
