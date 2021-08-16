@@ -11,4 +11,23 @@ export function pathToUrl(path) {
   return `atom://${encodeURIComponent(path).replace(ebs, '\\\\')}`;
 }
 
+export function clipRect(rectToBeClipped, clippingRect) {
+  const left = Math.max(rectToBeClipped.left, clippingRect.left);
+  const top = Math.max(rectToBeClipped.top, clippingRect.top);
+  const right = Math.min(
+    rectToBeClipped.left + rectToBeClipped.width,
+    clippingRect.left + clippingRect.width
+  );
+  const bottom = Math.min(
+    rectToBeClipped.top + rectToBeClipped.height,
+    clippingRect.top + clippingRect.height
+  );
+  return {
+    left: left,
+    top: top,
+    width: right - left,
+    height: bottom - top,
+  };
+}
+
 export default () => {};

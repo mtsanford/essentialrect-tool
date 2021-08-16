@@ -1,7 +1,7 @@
 import React, { useRef, useContext, useEffect, useReducer } from 'react';
 import { useImmerReducer } from 'use-immer';
 
-import { pathToUrl } from '../lib/util';
+import { pathToUrl, clipRect } from '../lib/util';
 import { fitRect, clientToImageRect } from '../lib/fit-essential-rect';
 import CurrentImageContext from '../store/current-image-context';
 
@@ -119,16 +119,20 @@ const imagePositionReducer = (state, action) => {
   }
 
   if (action.type === 'mouseUp') {
-    state.essentialRect = clientToImageRect(
+    const essentialRect = clientToImageRect(
       state.imageRect,
       state.renderedImageRect,
       state.selectRect
     );
-    state.renderedImageRect = fitRect(
-      state.imageRect,
-      state.essentialRect,
-      normalizedClientRect
-    );
+    const clipped = clipRect(essentialRect, state.imageRect);
+    if (clipped.width > 0 && clipped.height > 0) {
+      state.essentialRect = clipped;
+      state.renderedImageRect = fitRect(
+        state.imageRect,
+        state.essentialRect,
+        normalizedClientRect
+      );
+    }
     state.dragging = false;
     return;
   }
