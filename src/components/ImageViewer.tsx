@@ -126,7 +126,7 @@ const imagePositionReducer = (state, action) => {
     state.dragging = false;
     return;
   }
-  return state;
+
 };
 
 const ImageViewer = (props) => {

@@ -53,8 +53,8 @@ export function fitRect(imageRect, essentialRect, clientRect) {
   };
 
   const scaledEssentialRect = {
-    left: 0,
-    top: 0,
+    left: essentialRect.left * scale,
+    top: essentialRect.top * scale,
     width: essentialRect.width * scale,
     height: essentialRect.height * scale,
   };

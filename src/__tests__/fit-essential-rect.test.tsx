@@ -97,4 +97,7 @@ describe('clientToImageRect', () => {
   it('inverse image->client transform should give back imageRect', () => {
     expect(clientToImageRect(smallSquareImage, fittedRect, fittedRect)).toEqual(smallSquareImage);
   });
+  // it('', () => {
+  //   expect(clientToImageRect(smallSquareImage, fittedRect, fittedRect)).toEqual(smallSquareImage);
+  // });
 });
