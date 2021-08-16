@@ -48,11 +48,6 @@ const imagePositionDefault = {
     width: 0,
     height: 0,
   },
-
-  imageOffset: {
-    x: 0,
-    y: 0,
-  },
 };
 
 // IMPORTANT: Using immer!
@@ -79,16 +74,12 @@ const imagePositionReducer = (state, action) => {
 
   if (action.type === 'init') {
     state.imageRect = action.payload.imageRect;
-    state.essentialRect = action.payload.imageRect;  // initially show whole image
+    state.essentialRect = action.payload.imageRect; // initially show whole image
     state.renderedImageRect = fitRect(
       state.imageRect,
       state.essentialRect,
       normalizedClientRect
     );
-    console.log('init payload', action.payload);
-    console.log('init renderedImageRect', state.renderedImageRect);
-    console.log('init imageRect', state.imageRect);
-    console.log('normalizedClientRect', normalizedClientRect);
     return;
   }
 
@@ -122,7 +113,11 @@ const imagePositionReducer = (state, action) => {
   }
 
   if (action.type === 'mouseUp') {
-    state.essentialRect = clientToImageRect(state.imageRect, state.renderedImageRect, state.selectRect);
+    state.essentialRect = clientToImageRect(
+      state.imageRect,
+      state.renderedImageRect,
+      state.selectRect
+    );
     state.renderedImageRect = fitRect(
       state.imageRect,
       state.essentialRect,
@@ -146,21 +141,26 @@ const ImageViewer = (props) => {
   );
 
   useEffect(() => {
-    const clientRect = imageViewerRef.current.getBoundingClientRect();
-    const imageInfo = ipcRenderer.sendSync('get-image-info', imagePath);
-    const imageRect = {
-      ...imageInfo,
-      left: 0,
-      top: 0,
+    // Create an image element so that we can get it's dimensions.
+    // Electrons nativeImage.getSize() is bugged.
+    const probeImage = new Image();
+    probeImage.onload = () => {
+      const clientRect = imageViewerRef.current.getBoundingClientRect();
+      const imageRect = {
+        left: 0,
+        top: 0,
+        width: probeImage.width,
+        height: probeImage.height,
+      };
+      positionDispatch({
+        type: 'init',
+        payload: {
+          clientRect,
+          imageRect,
+        },
+      });
     };
-    positionDispatch({
-      type: 'init',
-      payload: {
-        clientRect,
-        imageRect,
-      },
-    });
-    console.log('effect', imagePath, imageInfo);
+    probeImage.src = imagePath;
   }, [imagePath]);
 
   const mouseDownHandler = (event) => {

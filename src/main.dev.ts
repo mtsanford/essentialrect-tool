@@ -11,15 +11,7 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import {
-  app,
-  BrowserWindow,
-  shell,
-  protocol,
-  ipcMain,
-  dialog,
-  nativeImage,
-} from 'electron';
+import { app, BrowserWindow, shell, protocol, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -168,18 +160,3 @@ ipcMain.on('select-dirs', (event, arg) => {
     defaultPath: path.normalize(arg.defaultPath),
   });
 });
-
-ipcMain.on('get-image-info', (event, filePath) => {
-  const image = nativeImage.createFromPath(filePath);
-  const size = image.getSize();
-  event.returnValue = { ...size };
-  console.log('get-image-info', filePath, size, event.returnValue);
-});
-
-
-const fileName = "D:\\Media\\China2015\\20150409_133033.jpg";
-const image = nativeImage.createFromPath(fileName);
-const size = image.getSize();
-const as = image.getAspectRatio();
-const sf = image.getScaleFactors();
-console.log('nativeImage.createFromPath test', fileName, size, as, sf);
