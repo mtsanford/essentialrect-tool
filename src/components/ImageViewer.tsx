@@ -83,6 +83,15 @@ const imagePositionReducer = (state, action) => {
     return;
   }
 
+  if (action.type === 'resize') {
+    state.renderedImageRect = fitRect(
+      state.imageRect,
+      state.essentialRect,
+      normalizedClientRect
+    );
+    return;
+  }
+
   if (action.type === 'mouseDown') {
     state.startMousePos = mousePos;
     state.dragging = true;
@@ -126,7 +135,6 @@ const imagePositionReducer = (state, action) => {
     state.dragging = false;
     return;
   }
-
 };
 
 const ImageViewer = (props) => {
@@ -162,6 +170,30 @@ const ImageViewer = (props) => {
     };
     probeImage.src = imagePath;
   }, [imagePath]);
+
+  const resizeHandler = (entries) => {
+    // const clientRect = imageViewerRef.current.getBoundingClientRect();
+    const clientRect = {
+      left: 0,
+      top: 0,
+      width: entries[0].contentRect.width,
+      height: entries[0].contentRect.height,
+    };
+
+    positionDispatch({
+      type: 'resize',
+      payload: {
+        clientRect,
+      },
+    });
+  };
+
+  useEffect(() => {
+    const imageViewerElement = imageViewerRef.current;
+    const ro = new ResizeObserver(resizeHandler);
+    ro.observe(imageViewerElement);
+    return () => ro.unobserve(imageViewerElement);
+  }, [imageViewerRef.current]);
 
   const mouseDownHandler = (event) => {
     const clientRect = imageViewerRef.current.getBoundingClientRect();

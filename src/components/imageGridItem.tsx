@@ -17,7 +17,6 @@ const ImageGridItem = (props) => {
   useDoubleClick({
     onSingleClick: () => {
       currentImageContext.setFilePath(imagePath);
-      log(`click ${imagePath}`);
     },
     onDoubleClick: () => {
       window.open(imagePath);
