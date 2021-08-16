@@ -3,6 +3,7 @@ import React, { useRef, useContext, useEffect, useReducer } from 'react';
 import { useImmerReducer } from 'use-immer';
 import { current } from 'immer';
 import { pathToUrl } from '../lib/util';
+import { fitRect, clientToImageRect } from '../lib/fit-essential-rect';
 
 import CurrentImageContext from '../store/current-image-context';
 import { Action } from 'history';
@@ -35,7 +36,7 @@ const imagePositionDefault = {
     width: 0,
     height: 0,
   },
-  essentialImageRect: {
+  essentialRect: {
     left: 0,
     top: 0,
     width: 0,
@@ -56,26 +57,39 @@ const imagePositionDefault = {
 
 // IMPORTANT: Using immer!
 const imagePositionReducer = (state, action) => {
+  // action.payload.clientRect and mousePos will be in window coordinates.
+  // We want client corrdinates
   let mousePos = { x: 0, y: 0 };
-  if (action.payload.clientRect && action.payload.mousePos) {
-    mousePos = {
-      x: action.payload.mousePos.x - action.payload.clientRect.left,
-      y: action.payload.mousePos.y - action.payload.clientRect.top,
-    };
-  }
+  let normalizedClientRect = { left: 0, top: 0, width: 0, height: 0 };
 
-  function calculateRenderedImageRect() {
-    // the essential rect needs to fit in client rect, so pick
-    // the smallest scale
-    const candidateScale1 = action.payload.clientRect.width / state.essentialImageRect.width;
-    const candidateScale2 = action.payload.clientRect.height / state.essentialImageRect.height;
-    const scale = Math.min(candidateScale1, candidateScale2);
+  if (action.payload.clientRect) {
+    normalizedClientRect = {
+      left: 0,
+      top: 0,
+      width: action.payload.clientRect.width,
+      height: action.payload.clientRect.height,
+    };
+    if (action.payload.mousePos) {
+      mousePos = {
+        x: action.payload.mousePos.x - action.payload.clientRect.left,
+        y: action.payload.mousePos.y - action.payload.clientRect.top,
+      };
+    }
   }
 
   if (action.type === 'init') {
     state.imageRect = action.payload.imageRect;
-    state.essentialImageRect = action.payload.essentialImageRect;
-    calculateRenderedImageRect();
+    state.essentialRect = action.payload.imageRect;  // initially show whole image
+    state.renderedImageRect = fitRect(
+      state.imageRect,
+      state.essentialRect,
+      normalizedClientRect
+    );
+    console.log('init payload', action.payload);
+    console.log('init renderedImageRect', state.renderedImageRect);
+    console.log('init imageRect', state.imageRect);
+    console.log('normalizedClientRect', normalizedClientRect);
+    return;
   }
 
   if (action.type === 'mouseDown') {
@@ -108,6 +122,12 @@ const imagePositionReducer = (state, action) => {
   }
 
   if (action.type === 'mouseUp') {
+    state.essentialRect = clientToImageRect(state.imageRect, state.renderedImageRect, state.selectRect);
+    state.renderedImageRect = fitRect(
+      state.imageRect,
+      state.essentialRect,
+      normalizedClientRect
+    );
     state.dragging = false;
     return;
   }
@@ -126,8 +146,21 @@ const ImageViewer = (props) => {
   );
 
   useEffect(() => {
+    const clientRect = imageViewerRef.current.getBoundingClientRect();
     const imageInfo = ipcRenderer.sendSync('get-image-info', imagePath);
-    console.log(imageInfo);
+    const imageRect = {
+      ...imageInfo,
+      left: 0,
+      top: 0,
+    };
+    positionDispatch({
+      type: 'init',
+      payload: {
+        clientRect,
+        imageRect,
+      },
+    });
+    console.log('effect', imagePath, imageInfo);
   }, [imagePath]);
 
   const mouseDownHandler = (event) => {
@@ -168,9 +201,10 @@ const ImageViewer = (props) => {
 
   const imageStyles = {
     position: 'absolute',
-    width: '500px',
-    left: `${positionState.imageOffset.x}px`,
-    top: `${positionState.imageOffset.y}px`,
+    left: `${positionState.renderedImageRect.left}px`,
+    top: `${positionState.renderedImageRect.top}px`,
+    width: `${positionState.renderedImageRect.width}px`,
+    height: `${positionState.renderedImageRect.height}px`,
     pointerEvents: 'none',
   };
 

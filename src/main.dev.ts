@@ -173,4 +173,13 @@ ipcMain.on('get-image-info', (event, filePath) => {
   const image = nativeImage.createFromPath(filePath);
   const size = image.getSize();
   event.returnValue = { ...size };
+  console.log('get-image-info', filePath, size, event.returnValue);
 });
+
+
+const fileName = "D:\\Media\\China2015\\20150409_133033.jpg";
+const image = nativeImage.createFromPath(fileName);
+const size = image.getSize();
+const as = image.getAspectRatio();
+const sf = image.getScaleFactors();
+console.log('nativeImage.createFromPath test', fileName, size, as, sf);

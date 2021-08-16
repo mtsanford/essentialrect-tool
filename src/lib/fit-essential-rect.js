@@ -61,7 +61,7 @@ export function fitRect(imageRect, essentialRect, clientRect) {
 
   const fittedRect = {
     width: imageRect.width * scale,
-    height: imageRect.width * scale,
+    height: imageRect.height * scale,
   };
 
   if (vscale > hscale) {
