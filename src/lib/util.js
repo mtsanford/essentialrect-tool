@@ -30,4 +30,13 @@ export function clipRect(rectToBeClipped, clippingRect) {
   };
 }
 
+export function normalizeRect(rect) {
+  return {
+    left: rect.left - rect.width,
+    top: rect.top - rect.height,
+    width: rect.width,
+    height: rect.height,
+  }
+}
+
 export default () => {};
