@@ -7,6 +7,7 @@ import log from './lib/log';
 
 import RandomImages from './components/RandomImages';
 import ImageViewer from './components/ImageViewer';
+import ImageEssentialPreview from './components/ImageEssentialPreview';
 import CurrentImageProvider from './store/CurrentImageProvider';
 
 import './App.global.css';
@@ -50,7 +51,8 @@ export default function App() {
   return (
     <CurrentImageProvider>
       <SplitterLayout>
-        <RandomImages picFolder={imageFolder} />
+        {/* <RandomImages picFolder={imageFolder} /> */}
+        <ImageEssentialPreview />
         <ImageViewer imagePath={selectedImage} />
       </SplitterLayout>
     </CurrentImageProvider>

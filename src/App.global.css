@@ -91,7 +91,7 @@ a:hover {
   position: absolute;
   z-index: 200;
   border: 1px dashed white;
-  pointer-events: 'none',
+  pointer-events: 'none';
 }
 
 .image-viewer-overlay {
@@ -104,4 +104,16 @@ a:hover {
 .image-viewer-image {
   position: absolute;
   z-index: 0;
+}
+
+.image-essential-container {
+  width: 100%;
+  height: 100%;
+  background-color: white;
+}
+
+.image-essential-image {
+  width: 100%;
+  height: 100%;
+  background-color: black;
 }
