@@ -48,11 +48,15 @@ export default function App() {
     return () => window.removeEventListener('keydown', keydownListener);
   }, []);
 
+  const aspectRatioInfo = {
+    ratio: 16 / 9,
+  };
+
   return (
     <CurrentImageProvider>
       <SplitterLayout>
         {/* <RandomImages picFolder={imageFolder} /> */}
-        <ImageEssentialPreview />
+        <ImageEssentialPreview aspectRatioInfo={aspectRatioInfo} />
         <ImageViewer imagePath={selectedImage} />
       </SplitterLayout>
     </CurrentImageProvider>
