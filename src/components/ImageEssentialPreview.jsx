@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 
 import { pathToUrl, clipRect, normalizeRect } from '../lib/util';
 import { fitRect, clientToImageRect } from '../lib/fit-essential-rect';
+import useClientRect from '../hooks/use-client-rect';
 import log from '../lib/log';
 
 const ImageEssentialPreview = (props) => {
@@ -11,45 +12,19 @@ const ImageEssentialPreview = (props) => {
   let containerStyles;
   let imageContainerRect;
 
-  const [clientRect, setClientRect] = useState(null);
-  const imageContainerRef = useRef();
-  const imagePath = useSelector((state) => state.currentImage.filePath);
-  const imageRect = useSelector((state) => state.currentImage.imageRect);
-  const essentialRect = useSelector(
-    (state) => state.currentImage.essentialRect
-  );
+  const [ref, clientRect] = useClientRect();
+  const {
+    filePath: imagePath,
+    imageRect,
+    isValid: imageIsValid,
+    essentialRect,
+  } = useSelector((state) => state.currentImage);
 
   const { ratio: aspectRatio } = props.aspectRatioInfo;
 
   const renderContainer = !!clientRect;
 
-  const renderImage =
-    renderContainer &&
-    imageContainerRef.current &&
-    imagePath &&
-    imageRect.width > 0 &&
-    imageRect.height > 0;
-
-
-  useEffect(() => {
-    const element = imageContainerRef.current;
-    const resizeHandler = (entries) => {
-      const newClientRect = {
-        left: 0,
-        top: 0,
-        width: entries[0].contentRect.width,
-        height: entries[0].contentRect.height,
-      };
-
-      setClientRect(newClientRect);
-    };
-    const ro = new ResizeObserver(resizeHandler);
-    ro.observe(element);
-
-    return () => {
-      ro.unobserve(element);
-    };
-  }, []);
+  const renderImage = renderContainer && imageIsValid;
 
   if (renderContainer) {
     if (aspectRatio > 1) {
@@ -100,7 +75,7 @@ const ImageEssentialPreview = (props) => {
   }
 
   return (
-    <div className="image-essential-container" ref={imageContainerRef}>
+    <div className="image-essential-container" ref={ref}>
       <div className="image-essential-image-container" style={containerStyles}>
         {renderImage && (
           <img

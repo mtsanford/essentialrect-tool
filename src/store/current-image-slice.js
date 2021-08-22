@@ -6,12 +6,14 @@ const currentImageSlice = createSlice({
     filePath: 'D:/Media/China2015/20150303_102929.jpg',
     imageRect:  { left: 0, top: 0, width: 2560, height: 1920 },
     essentialRect: { left: 0, top: 0, width: 2560, height: 1920 },
+    isValid: true,
   },
   reducers: {
     setImage(state, action) {
       state.filePath = action.payload.filePath;
       state.imageRect = action.payload.imageRect;
       state.essentialRect = action.payload.essentialRect;
+      state.isValid = true;
     },
   },
 });
