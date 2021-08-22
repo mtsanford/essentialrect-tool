@@ -6,6 +6,33 @@ import { fitRect, clientToImageRect } from '../lib/fit-essential-rect';
 import useClientRect from '../hooks/use-client-rect';
 import log from '../lib/log';
 
+const imageContainerFit = 0.9; // % of client to fill
+const imageContainerBorder = 0.06; // width of border as % of client
+
+function calcImageContainerRect(clientRect, aspectRatio) {
+  let imageContainerRect;
+  if (aspectRatio > 1) {
+    const width = clientRect.width * imageContainerFit;
+    const height = width / aspectRatio;
+    imageContainerRect = {
+      width: width,
+      height: height,
+      left: (clientRect.width - width) / 2,
+      top: (clientRect.height - height) / 2,
+    };
+  } else {
+    const height = clientRect.height * imageContainerFit;
+    const width = height * aspectRatio;
+    imageContainerRect = {
+      height: height,
+      width: width,
+      top: clientRect.height * imageContainerBorder,
+      left: (clientRect.width - width) / 2,
+    };
+  }
+  return imageContainerRect;
+}
+
 const ImageEssentialPreview = (props) => {
   let imageUrl;
   let imageStyles;
@@ -13,39 +40,16 @@ const ImageEssentialPreview = (props) => {
   let imageContainerRect;
 
   const [ref, clientRect] = useClientRect();
-  const {
-    filePath: imagePath,
-    imageRect,
-    isValid: imageIsValid,
-    essentialRect,
-  } = useSelector((state) => state.currentImage);
+  const currentImage = useSelector((state) => state.currentImage);
 
-  const { ratio: aspectRatio } = props.aspectRatioInfo;
+  const { aspectRatio } = props.aspectRatioInfo;
 
   const renderContainer = !!clientRect;
 
-  const renderImage = renderContainer && imageIsValid;
+  const renderImage = renderContainer && currentImage.isValid;
 
   if (renderContainer) {
-    if (aspectRatio > 1) {
-      const width = clientRect.width * 0.9;
-      const height = width / aspectRatio;
-      imageContainerRect = {
-        width: width,
-        height: height,
-        left: clientRect.width * 0.05,
-        top: (clientRect.height - height) / 2,
-      };
-    } else {
-      const height = clientRect.height * 0.9;
-      const width = height * aspectRatio;
-      imageContainerRect = {
-        height: height,
-        width: width,
-        top: clientRect.height * 0.05,
-        left: (clientRect.width - width) / 2,
-      };
-    }
+    imageContainerRect = calcImageContainerRect(clientRect, aspectRatio);
 
     containerStyles = {
       position: 'absolute',
@@ -58,12 +62,12 @@ const ImageEssentialPreview = (props) => {
 
   if (renderImage) {
     const renderedImageRect = fitRect(
-      imageRect,
-      essentialRect,
+      currentImage.imageRect,
+      currentImage.essentialRect,
       normalizeRect(imageContainerRect)
     );
 
-    imageUrl = pathToUrl(imagePath);
+    imageUrl = pathToUrl(currentImage.filePath);
 
     imageStyles = {
       position: 'absolute',
@@ -76,16 +80,21 @@ const ImageEssentialPreview = (props) => {
 
   return (
     <div className="image-essential-container" ref={ref}>
-      <div className="image-essential-image-container" style={containerStyles}>
-        {renderImage && (
-          <img
-            className="image-essential-image"
-            src={imageUrl}
-            alt=""
-            style={imageStyles}
-          />
-        )}
-      </div>
+      {renderContainer && (
+        <div
+          className="image-essential-image-container"
+          style={containerStyles}
+        >
+          {renderImage && (
+            <img
+              className="image-essential-image"
+              src={imageUrl}
+              alt=""
+              style={imageStyles}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 };

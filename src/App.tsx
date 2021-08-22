@@ -49,7 +49,7 @@ export default function App() {
   }, []);
 
   const aspectRatioInfo = {
-    ratio: 16 / 9,
+    aspectRatio: 16 / 9,
   };
 
   return (
