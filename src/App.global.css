@@ -118,8 +118,8 @@ a:hover {
 .image-essential-image-container {
   position: absolute;
   background-color: black;
-  border: 10px white solid;
-  border-radius: 10px;
+  border-color: white;
+  border-style: solid;
   overflow: hidden;
   box-sizing: content-box;
 }

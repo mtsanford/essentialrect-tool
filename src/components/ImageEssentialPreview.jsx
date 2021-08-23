@@ -6,31 +6,33 @@ import { fitRect, clientToImageRect } from '../lib/fit-essential-rect';
 import useClientRect from '../hooks/use-client-rect';
 import log from '../lib/log';
 
-const imageContainerFit = 0.9; // % of client to fill
-const imageContainerBorder = 0.06; // width of border as % of client
+const imageContainerFit = 0.91; // % of client to fill
+const imageContainerBorder = 0.015; // width of border as % of client
 
 function calcImageContainerRect(clientRect, aspectRatio) {
-  let imageContainerRect;
+  let imageContainerRect, borderSize;
   if (aspectRatio > 1) {
     const width = clientRect.width * imageContainerFit;
     const height = width / aspectRatio;
+    borderSize = clientRect.width * imageContainerBorder;
     imageContainerRect = {
       width: width,
       height: height,
-      left: (clientRect.width - width) / 2,
-      top: (clientRect.height - height) / 2,
+      left: (clientRect.width - width) / 2 - borderSize,
+      top: (clientRect.height - height) / 2 - borderSize,
     };
   } else {
     const height = clientRect.height * imageContainerFit;
     const width = height * aspectRatio;
+    borderSize = clientRect.height * imageContainerBorder;
     imageContainerRect = {
       height: height,
       width: width,
-      top: clientRect.height * imageContainerBorder,
-      left: (clientRect.width - width) / 2,
+      top: clientRect.height * imageContainerBorder - borderSize,
+      left: (clientRect.width - width) / 2 - borderSize,
     };
   }
-  return imageContainerRect;
+  return { imageContainerRect, borderSize };
 }
 
 const ImageEssentialPreview = (props) => {
@@ -38,6 +40,7 @@ const ImageEssentialPreview = (props) => {
   let imageStyles;
   let containerStyles;
   let imageContainerRect;
+  let borderSize;
 
   const [ref, clientRect] = useClientRect();
   const currentImage = useSelector((state) => state.currentImage);
@@ -49,14 +52,19 @@ const ImageEssentialPreview = (props) => {
   const renderImage = renderContainer && currentImage.isValid;
 
   if (renderContainer) {
-    imageContainerRect = calcImageContainerRect(clientRect, aspectRatio);
+    ({ imageContainerRect, borderSize } = calcImageContainerRect(
+      clientRect,
+      aspectRatio
+    ));
 
     containerStyles = {
-      position: 'absolute',
+      // position: 'absolute',
       left: `${imageContainerRect.left}px`,
       top: `${imageContainerRect.top}px`,
       width: `${imageContainerRect.width}px`,
       height: `${imageContainerRect.height}px`,
+      borderWidth: borderSize,
+      borderRadius: borderSize,
     };
   }
 
