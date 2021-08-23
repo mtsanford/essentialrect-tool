@@ -38,6 +38,8 @@ function calcImageContainerRect(clientRect, aspectRatio) {
 const ImageEssentialPreview = (props) => {
   let imageUrl;
   let imageStyles;
+  let contentStyles = {};
+  let contentClasses;
   let containerStyles;
   let imageContainerRect;
   let borderSize;
@@ -46,10 +48,12 @@ const ImageEssentialPreview = (props) => {
   const currentImage = useSelector((state) => state.currentImage);
 
   const { aspectRatio } = props.aspectRatioInfo;
+  const landscape = aspectRatio >= 1;
 
   const renderContainer = !!clientRect;
 
-  const renderImage = renderContainer && currentImage.isValid;
+  // const renderImage = renderContainer && currentImage.isValid;
+  const renderImage = false;
 
   if (renderContainer) {
     ({ imageContainerRect, borderSize } = calcImageContainerRect(
@@ -57,10 +61,38 @@ const ImageEssentialPreview = (props) => {
       aspectRatio
     ));
 
+    contentStyles = {
+      height: clientRect.width,
+    };
+
+    const orientationClass = landscape
+      ? 'image-essential-landscape'
+      : 'image-essential-portrait';
+
+    contentClasses = `image-essential-grid-item-content ${orientationClass}`;
+
+    if (landscape) {
+      imageContainerRect = {
+        top: 0,
+        left: 0,
+        width: imageContainerFit * clientRect.width,
+        height: (imageContainerFit * clientRect.width) / aspectRatio,
+      };
+    } else {
+      imageContainerRect = {
+        top: 0,
+        left: 0,
+        width: imageContainerFit * clientRect.width * aspectRatio,
+        height: imageContainerFit * clientRect.width,
+      };
+    }
+
+    borderSize = clientRect.width * imageContainerBorder;
+
     containerStyles = {
       // position: 'absolute',
-      left: `${imageContainerRect.left}px`,
-      top: `${imageContainerRect.top}px`,
+      // left: `${imageContainerRect.left}px`,
+      // top: `${imageContainerRect.top}px`,
       width: `${imageContainerRect.width}px`,
       height: `${imageContainerRect.height}px`,
       borderWidth: borderSize,
@@ -87,8 +119,16 @@ const ImageEssentialPreview = (props) => {
   }
 
   return (
-    <div className="image-essential-container" ref={ref}>
-      {renderContainer && (
+    <div className="image-essential-grid-item" ref={ref}>
+      <div className={contentClasses} style={contentStyles}>
+        <div
+          className="image-essential-image-container"
+          style={containerStyles}
+        >&nbsp;</div>
+        <div className="image-essential-text">iPhone 11</div>
+      </div>
+
+      {/* {renderContainer && (
         <div
           className="image-essential-image-container"
           style={containerStyles}
@@ -102,7 +142,7 @@ const ImageEssentialPreview = (props) => {
             />
           )}
         </div>
-      )}
+      )} */}
     </div>
   );
 };

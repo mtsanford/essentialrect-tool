@@ -108,22 +108,3 @@ a:hover {
 
 /* -------- */
 
-.image-essential-container {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-color: #222;
-}
-
-.image-essential-image-container {
-  position: absolute;
-  background-color: black;
-  border-color: white;
-  border-style: solid;
-  overflow: hidden;
-  box-sizing: content-box;
-}
-
-.image-essential-image {
-  position: absolute;
-}

@@ -1,3 +1,7 @@
+
+@import './components/ImageEssentialPreview';
+
+
 .imagegrid-container {
   min-height: 100%;
   width: 100%;
@@ -11,7 +15,6 @@
   gap: 0.2rem;
   border: 0.2rem white solid;
 }
-
 
 .imagegrid-item {
 
@@ -61,3 +64,5 @@
   width: 100%;
   height: 100%;
 }
+
+

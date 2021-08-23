@@ -3,11 +3,12 @@ import { ipcRenderer } from 'electron';
 
 import SplitterLayout from 'react-splitter-layout';
 
+
 import log from './lib/log';
 
 import RandomImages from './components/RandomImages';
 import ImageViewer from './components/ImageViewer';
-import ImageEssentialPreview from './components/ImageEssentialPreview';
+import ImageEssentialGrid from './components/ImageEssentialGrid';
 import CurrentImageProvider from './store/CurrentImageProvider';
 
 import './App.global.css';
@@ -56,7 +57,8 @@ export default function App() {
     <CurrentImageProvider>
       <SplitterLayout>
         {/* <RandomImages picFolder={imageFolder} /> */}
-        <ImageEssentialPreview aspectRatioInfo={aspectRatioInfo} />
+        {/* <ImageEssentialPreview aspectRatioInfo={aspectRatioInfo} /> */}
+        <ImageEssentialGrid />
         <ImageViewer imagePath={selectedImage} />
       </SplitterLayout>
     </CurrentImageProvider>
