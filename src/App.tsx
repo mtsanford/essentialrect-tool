@@ -13,12 +13,11 @@ import './App.global.css';
 import './App.global.scss';
 
 export default function App() {
-  const [selectedImage, setSelectedImage] = useState(
-    'D:/Media/China2015/20150210_014858.jpg'
-  );
   const [imageFolder, setImageFolderState] = useState(
     localStorage.getItem('imageFolder') || '/'
   );
+
+  const [showPreview, setShowPreview] = useState(false);
 
   // keyDownListener needs access to the value of imageFolder
   // on most recent render, not the one on first render which
@@ -41,6 +40,9 @@ export default function App() {
           setImageFolder(newImageFolder);
         }
       }
+      if (key === 'p') {
+        setShowPreview((oldValue) => !oldValue);
+      }
     };
     window.addEventListener('keydown', keydownListener);
 
@@ -53,9 +55,9 @@ export default function App() {
 
   return (
     <SplitterLayout customClassName="imgjoy-splitter-layout">
-      <RandomImages picFolder={imageFolder} />
-      {/* <ImageEssentialGrid /> */}
-      <ImageViewer imagePath={selectedImage} />
+      {showPreview && <ImageEssentialGrid />}
+      {!showPreview && <RandomImages picFolder={imageFolder} />}
+      <ImageViewer />
     </SplitterLayout>
   );
 }
