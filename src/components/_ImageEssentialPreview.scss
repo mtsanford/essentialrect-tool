@@ -9,10 +9,11 @@
   grid-row-gap: 5px;
   width: 100%;
   background-color: #222;
+  overflow-y: overlay;
 }
 
 .image-essential-grid-item {
-  background-color: #ccc;
+  background-color: #222;
   display: flex;
   padding: 2%;
   margin-bottom: 5px;
@@ -60,6 +61,7 @@
   overflow: hidden;
   box-sizing: content-box;
   margin: 0px;
+  position: relative;
 }
 
 .image-essential-image {

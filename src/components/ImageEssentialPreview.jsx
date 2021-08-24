@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 
 import { pathToUrl, clipRect, normalizeRect } from '../lib/util';
@@ -44,6 +44,7 @@ const ImageEssentialPreview = (props) => {
   let imageContainerRect;
   let borderSize;
 
+  const imageContainerRef = useRef();
   const [ref, clientRect] = useClientRect();
   const currentImage = useSelector((state) => state.currentImage);
 
@@ -52,8 +53,7 @@ const ImageEssentialPreview = (props) => {
 
   const renderContainer = !!clientRect;
 
-  // const renderImage = renderContainer && currentImage.isValid;
-  const renderImage = false;
+  const renderImage = renderContainer && currentImage.isValid;
 
   if (renderContainer) {
     ({ imageContainerRect, borderSize } = calcImageContainerRect(
@@ -90,9 +90,6 @@ const ImageEssentialPreview = (props) => {
     borderSize = clientRect.width * imageContainerBorder;
 
     containerStyles = {
-      // position: 'absolute',
-      // left: `${imageContainerRect.left}px`,
-      // top: `${imageContainerRect.top}px`,
       width: `${imageContainerRect.width}px`,
       height: `${imageContainerRect.height}px`,
       borderWidth: borderSize,
@@ -104,7 +101,7 @@ const ImageEssentialPreview = (props) => {
     const renderedImageRect = fitRect(
       currentImage.imageRect,
       currentImage.essentialRect,
-      normalizeRect(imageContainerRect)
+      imageContainerRect
     );
 
     imageUrl = pathToUrl(currentImage.filePath);
@@ -124,14 +121,7 @@ const ImageEssentialPreview = (props) => {
         <div
           className="image-essential-image-container"
           style={containerStyles}
-        >&nbsp;</div>
-        <div className="image-essential-text">iPhone 11</div>
-      </div>
-
-      {/* {renderContainer && (
-        <div
-          className="image-essential-image-container"
-          style={containerStyles}
+          ref={imageContainerRef}
         >
           {renderImage && (
             <img
@@ -142,7 +132,8 @@ const ImageEssentialPreview = (props) => {
             />
           )}
         </div>
-      )} */}
+        <div className="image-essential-text">iPhone 11</div>
+      </div>
     </div>
   );
 };
