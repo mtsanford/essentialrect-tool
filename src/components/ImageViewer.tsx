@@ -1,9 +1,10 @@
 import React, { useRef, useEffect } from 'react';
 import { useImmerReducer } from 'use-immer';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { pathToUrl, clipRect } from '../lib/util';
 import { fitRect, clientToImageRect } from '../lib/fit-essential-rect';
+import { currentImageActions } from '../store/current-image-slice';
 
 const imagePositionDefault = {
   dragging: false,
@@ -139,6 +140,7 @@ const imagePositionReducer = (state, action) => {
 };
 
 const ImageViewer = (props) => {
+  const dispatch = useDispatch();
   const imageViewerRef = useRef();
   const currentImage = useSelector((state) => state.currentImage);
   const imagePath = currentImage.filePath;
@@ -163,7 +165,7 @@ const ImageViewer = (props) => {
         imageRect,
       },
     });
-  }, [currentImage, positionDispatch]);
+  }, [currentImage.isValid, currentImage.filePath, positionDispatch]);
 
   useEffect(() => {
     const imageViewerElement = imageViewerRef.current;
@@ -186,6 +188,10 @@ const ImageViewer = (props) => {
     ro.observe(imageViewerElement);
     return () => ro.unobserve(imageViewerElement);
   }, []);
+
+  useEffect(() => {
+    dispatch(currentImageActions.setEssentialRect(positionState.essentialRect));
+  }, [positionState.essentialRect, dispatch])
 
   const mouseDownHandler = (event) => {
     const clientRect = imageViewerRef.current.getBoundingClientRect();

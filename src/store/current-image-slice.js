@@ -16,6 +16,9 @@ const currentImageSlice = createSlice({
         action.payload.essentialRect || action.payload.imageRect;
       state.isValid = true;
     },
+    setEssentialRect(state, action) {
+      state.essentialRect = action.payload;
+    }
   },
 });
 
