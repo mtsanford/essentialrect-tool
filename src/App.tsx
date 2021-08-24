@@ -55,7 +55,7 @@ export default function App() {
 
   return (
     <CurrentImageProvider>
-      <SplitterLayout>
+      <SplitterLayout customClassName="imgjoy-splitter-layout">
         {/* <RandomImages picFolder={imageFolder} /> */}
         {/* <ImageEssentialPreview aspectRatioInfo={aspectRatioInfo} /> */}
         <ImageEssentialGrid />
