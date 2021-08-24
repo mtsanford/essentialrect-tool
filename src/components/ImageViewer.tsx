@@ -1,9 +1,9 @@
-import React, { useRef, useContext, useEffect, useReducer } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useImmerReducer } from 'use-immer';
+import { useSelector } from 'react-redux';
 
 import { pathToUrl, clipRect } from '../lib/util';
 import { fitRect, clientToImageRect } from '../lib/fit-essential-rect';
-import CurrentImageContext from '../store/current-image-context';
 
 const imagePositionDefault = {
   dragging: false,
@@ -140,8 +140,8 @@ const imagePositionReducer = (state, action) => {
 
 const ImageViewer = (props) => {
   const imageViewerRef = useRef();
-  const currentImageContext = useContext(CurrentImageContext);
-  const imagePath = currentImageContext.filePath;
+  const currentImage = useSelector((state) => state.currentImage);
+  const imagePath = currentImage.filePath;
   const imageUrl = pathToUrl(imagePath);
 
   const [positionState, positionDispatch] = useImmerReducer(
@@ -150,27 +150,20 @@ const ImageViewer = (props) => {
   );
 
   useEffect(() => {
-    // Create an image element so that we can get it's dimensions.
-    // Electrons nativeImage.getSize() is bugged.
-    const probeImage = new Image();
-    probeImage.onload = () => {
-      const clientRect = imageViewerRef.current.getBoundingClientRect();
-      const imageRect = {
-        left: 0,
-        top: 0,
-        width: probeImage.width,
-        height: probeImage.height,
-      };
-      positionDispatch({
-        type: 'init',
-        payload: {
-          clientRect,
-          imageRect,
-        },
-      });
-    };
-    probeImage.src = imagePath;
-  }, [imagePath]);
+    if (!currentImage.isValid || !imageViewerRef.current) {
+      return;
+    }
+
+    const clientRect = imageViewerRef.current.getBoundingClientRect();
+    const { imageRect } = currentImage;
+    positionDispatch({
+      type: 'init',
+      payload: {
+        clientRect,
+        imageRect,
+      },
+    });
+  }, [currentImage, positionDispatch]);
 
   useEffect(() => {
     const imageViewerElement = imageViewerRef.current;

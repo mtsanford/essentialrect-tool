@@ -3,13 +3,11 @@ import { ipcRenderer } from 'electron';
 
 import SplitterLayout from 'react-splitter-layout';
 
-
 import log from './lib/log';
 
 import RandomImages from './components/RandomImages';
 import ImageViewer from './components/ImageViewer';
 import ImageEssentialGrid from './components/ImageEssentialGrid';
-import CurrentImageProvider from './store/CurrentImageProvider';
 
 import './App.global.css';
 import './App.global.scss';
@@ -54,13 +52,10 @@ export default function App() {
   };
 
   return (
-    <CurrentImageProvider>
-      <SplitterLayout customClassName="imgjoy-splitter-layout">
-        {/* <RandomImages picFolder={imageFolder} /> */}
-        {/* <ImageEssentialPreview aspectRatioInfo={aspectRatioInfo} /> */}
-        <ImageEssentialGrid />
-        <ImageViewer imagePath={selectedImage} />
-      </SplitterLayout>
-    </CurrentImageProvider>
+    <SplitterLayout customClassName="imgjoy-splitter-layout">
+      <RandomImages picFolder={imageFolder} />
+      {/* <ImageEssentialGrid /> */}
+      <ImageViewer imagePath={selectedImage} />
+    </SplitterLayout>
   );
 }

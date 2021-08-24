@@ -12,6 +12,10 @@ const ImageEssentialGrid = (props) => {
       aspectRatio: 9 / 16,
       id: 2,
     },
+    {
+      aspectRatio: 4 / 3,
+      id: 3,
+    },
   ];
 
   return (
