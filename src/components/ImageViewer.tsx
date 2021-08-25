@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useImmerReducer } from 'use-immer';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -11,35 +11,34 @@ import {
 import { currentImageActions } from '../store/current-image-slice';
 import useClientRect from '../hooks/use-client-rect';
 
+// const selectDefault = {
+//   dragging: false,
+//   startMousePos: {
+//     x: 0,
+//     y: 0,
+//   },
+//   selectRect: {
+//     left: 0,
+//     top: 0,
+//     width: 0,
+//     height: 0,
+//   },
+//   essentialRect: {
+//     left: 0,
+//     top: 0,
+//     width: 0,
+//     height: 0,
+//   },
+// };
 const selectDefault = {
   dragging: false,
-  startMousePos: {
-    x: 0,
-    y: 0,
-  },
-  selectRect: {
-    left: 0,
-    top: 0,
-    width: 0,
-    height: 0,
-  },
-  essentialRect: {
-    left: 0,
-    top: 0,
-    width: 0,
-    height: 0,
-  },
+  startMousePos: null,
+  selectRect: null,
+  calculatedEssentialRect: null,
 };
 
 // IMPORTANT: Using immer!
 const selectReducer = (state, action) => {
-  if (action.type === 'init') {
-    const { imageRect } = action.payload;
-    state.imageRect = imageRect;
-    state.essentialRect = imageRect; // initially show whole image
-    return;
-  }
-
   if (action.type === 'mouseDown') {
     const { mousePos } = action.payload;
     state.startMousePos = mousePos;
@@ -51,8 +50,6 @@ const selectReducer = (state, action) => {
       width: 0,
       height: 0,
     };
-
-    return;
   }
 
   if (action.type === 'mouseMove' || action.type === 'mouseUp') {
@@ -67,10 +64,6 @@ const selectReducer = (state, action) => {
     }
   }
 
-  if (action.type === 'mouseMove') {
-    return;
-  }
-
   if (action.type === 'mouseUp') {
     const { imageRect, renderedImageRect } = action.payload;
     const essentialRect = clientToImageRect(
@@ -80,16 +73,22 @@ const selectReducer = (state, action) => {
     );
     const clipped = clipRect(essentialRect, imageRect);
     if (clipped.width > 0 && clipped.height > 0) {
-      state.essentialRect = clipped;
+      state.calculatedEssentialRect = clipped;
     }
     state.dragging = false;
-    return;
   }
 };
 
 const getMousePos = (event) => ({
   x: event.nativeEvent.offsetX,
   y: event.nativeEvent.offsetY,
+});
+
+const stylesFromRect = (rect) => ({
+  left: `${rect.left}px`,
+  top: `${rect.top}px`,
+  width: `${rect.width}px`,
+  height: `${rect.height}px`,
 });
 
 const ImageViewer = (props) => {
@@ -101,77 +100,40 @@ const ImageViewer = (props) => {
 
   const dispatch = useDispatch();
   const [imageViewerRef, clientRect] = useClientRect();
-  const {
-    filePath: imagePath,
-    isValid: imageIsValid,
-    imageRect,
-    essentialRect,
-  } = useSelector((state) => state.currentImage);
-  const imageUrl = pathToUrl(imagePath);
-
-  const [selectState, selectDispatch] = useImmerReducer(
-    selectReducer,
-    selectDefault
+  const { filePath, isValid, imageRect, essentialRect } = useSelector(
+    (state) => state.currentImage
   );
+  const imageUrl = pathToUrl(filePath);
 
-  const drawImage = imageIsValid && clientRect;
+  const [
+    { calculatedEssentialRect, selectRect, dragging },
+    selectDispatch,
+  ] = useImmerReducer(selectReducer, selectDefault);
 
   useEffect(() => {
-    if (!drawImage) {
-      return;
+    if (calculatedEssentialRect) {
+      dispatch(currentImageActions.setEssentialRect(calculatedEssentialRect));
     }
+  }, [calculatedEssentialRect, dispatch]);
 
-    selectDispatch({
-      type: 'init',
-      payload: {
-        clientRect,
-        imageRect,
-      },
-    });
-  }, [drawImage, clientRect, imageIsValid, imageRect, selectDispatch]);
+  // do we have a valid image and rect to draw it in?
+  const ready = isValid && clientRect;
 
-  useEffect(() => {
-    dispatch(currentImageActions.setEssentialRect(selectState.essentialRect));
-  }, [selectState.essentialRect, dispatch]);
-
-  if (drawImage) {
+  if (ready) {
     renderedImageRect = fitRect(imageRect, imageRect, clientRect);
-    imageStyles = {
-      left: `${renderedImageRect.left}px`,
-      top: `${renderedImageRect.top}px`,
-      width: `${renderedImageRect.width}px`,
-      height: `${renderedImageRect.height}px`,
-    };
-
+    imageStyles = stylesFromRect(renderedImageRect);
     essentialRectClient = imageToClientRect(
       imageRect,
       renderedImageRect,
       essentialRect
     );
-    essentialRectStyles = {
-      left: `${essentialRectClient.left}px`,
-      top: `${essentialRectClient.top}px`,
-      width: `${essentialRectClient.width}px`,
-      height: `${essentialRectClient.height}px`,
-    };
 
-    selectStyles = {
-      left: `${selectState.selectRect.left}px`,
-      top: `${selectState.selectRect.top}px`,
-      width: `${selectState.selectRect.width}px`,
-      height: `${selectState.selectRect.height}px`,
-      visibility: selectState.dragging ? 'visible' : 'hidden',
-    };
+    essentialRectStyles = stylesFromRect(essentialRectClient);
+
+    if (dragging) selectStyles = stylesFromRect(selectRect);
   }
 
   const mouseHandler = (type, event) => {
-    // console.log(type);
-    // console.log(event);
-
-    if (!drawImage) {
-      return;
-    }
-
     selectDispatch({
       type,
       payload: {
@@ -185,9 +147,11 @@ const ImageViewer = (props) => {
 
   return (
     <div className="image-viewer" ref={imageViewerRef}>
-      {drawImage && (
+      {ready && (
         <>
-          <div className="image-viewer-select" style={selectStyles} />
+          {dragging && (
+            <div className="image-viewer-select" style={selectStyles} />
+          )}
           <div
             className="image-viewer-essential-rect"
             style={essentialRectStyles}
