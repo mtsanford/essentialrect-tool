@@ -11,25 +11,6 @@ import {
 import { currentImageActions } from '../store/current-image-slice';
 import useClientRect from '../hooks/use-client-rect';
 
-// const selectDefault = {
-//   dragging: false,
-//   startMousePos: {
-//     x: 0,
-//     y: 0,
-//   },
-//   selectRect: {
-//     left: 0,
-//     top: 0,
-//     width: 0,
-//     height: 0,
-//   },
-//   essentialRect: {
-//     left: 0,
-//     top: 0,
-//     width: 0,
-//     height: 0,
-//   },
-// };
 const selectDefault = {
   dragging: false,
   startMousePos: null,
