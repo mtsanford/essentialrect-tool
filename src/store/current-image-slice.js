@@ -3,10 +3,10 @@ import { createSlice } from '@reduxjs/toolkit';
 const currentImageSlice = createSlice({
   name: 'ui',
   initialState: {
-    filePath: 'D:/Media/China2015/20150303_102929.jpg',
-    imageRect: { left: 0, top: 0, width: 2560, height: 1920 },
-    essentialRect: { left: 1480, top: 0, width: 1080, height: 1520 },
-    isValid: true,
+    filePath: null,
+    imageRect: null,
+    essentialRect: null,
+    isValid: false,
   },
   reducers: {
     setImage(state, action) {
