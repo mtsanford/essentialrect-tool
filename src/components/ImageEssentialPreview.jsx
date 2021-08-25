@@ -8,11 +8,15 @@ import log from '../lib/log';
 
 const imageContainerFit = 0.91; // % of client to fill
 const imageContainerBorder = 0.015; // width of border as % of client
+const imageContainerFont = 0.05;
 
 function calcImageContainerRect(clientRect, aspectRatio) {
   let imageContainerRect, borderSize;
   if (aspectRatio > 1) {
-    const width = clientRect.width * imageContainerFit;
+    let width = clientRect.width * imageContainerFit;
+    if (aspectRatio < 1.3) {
+      width = width * 0.8;
+    }
     const height = width / aspectRatio;
     borderSize = clientRect.width * imageContainerBorder;
     imageContainerRect = {
@@ -22,7 +26,11 @@ function calcImageContainerRect(clientRect, aspectRatio) {
       top: (clientRect.height - height) / 2 - borderSize,
     };
   } else {
-    const height = clientRect.height * imageContainerFit;
+    let height = clientRect.height * imageContainerFit;
+    if (aspectRatio > 0.75) {
+      height = height * 0.5;
+    }
+    height = height * 0.5;
     const width = height * aspectRatio;
     borderSize = clientRect.height * imageContainerBorder;
     imageContainerRect = {
@@ -38,17 +46,20 @@ function calcImageContainerRect(clientRect, aspectRatio) {
 const ImageEssentialPreview = (props) => {
   let imageUrl;
   let imageStyles;
+  let textStyles;
   let contentStyles = {};
   let contentClasses;
   let containerStyles;
   let imageContainerRect;
   let borderSize;
+  let sizeMultiplier;
+  let fontSize;
 
   const imageContainerRef = useRef();
   const [ref, clientRect] = useClientRect();
   const currentImage = useSelector((state) => state.currentImage);
 
-  const { aspectRatio } = props.aspectRatioInfo;
+  const { aspectRatio, name: aspectName } = props.aspectRatioInfo;
   const landscape = aspectRatio >= 1;
 
   const renderContainer = !!clientRect;
@@ -71,19 +82,28 @@ const ImageEssentialPreview = (props) => {
 
     contentClasses = `image-essential-grid-item-content ${orientationClass}`;
 
+    if (aspectRatio > 0.9 && aspectRatio < 1.1) {
+      sizeMultiplier = imageContainerFit * 0.8;
+    } else if (aspectRatio > 0.74 && aspectRatio < 1.34) {
+      sizeMultiplier = imageContainerFit * 0.9;
+    }
+    else {
+      sizeMultiplier = imageContainerFit;
+    }
+
     if (landscape) {
       imageContainerRect = {
         top: 0,
         left: 0,
-        width: imageContainerFit * clientRect.width,
-        height: (imageContainerFit * clientRect.width) / aspectRatio,
+        width: sizeMultiplier * clientRect.width,
+        height: (sizeMultiplier * clientRect.width) / aspectRatio,
       };
     } else {
       imageContainerRect = {
         top: 0,
         left: 0,
-        width: imageContainerFit * clientRect.width * aspectRatio,
-        height: imageContainerFit * clientRect.width,
+        width: sizeMultiplier * clientRect.width * aspectRatio,
+        height: sizeMultiplier * clientRect.width,
       };
     }
 
@@ -95,6 +115,12 @@ const ImageEssentialPreview = (props) => {
       borderWidth: borderSize,
       borderRadius: borderSize,
     };
+
+    fontSize = clientRect.width * imageContainerFont;
+
+    textStyles = {
+      fontSize
+    }
   }
 
   if (renderImage) {
@@ -132,7 +158,7 @@ const ImageEssentialPreview = (props) => {
             />
           )}
         </div>
-        <div className="image-essential-text">iPhone 11</div>
+        <div className="image-essential-text" style={textStyles}>{aspectName}</div>
       </div>
     </div>
   );
