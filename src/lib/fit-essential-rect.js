@@ -23,29 +23,32 @@ export function fitLine(a, e, b, v) {
   return (v - e) / 2 - a;
 }
 
-// Given a rect (clientRect) in client coordinates, get the coordinates in imageRect,
+// Given a rect (clientRectToTransform) in client coordinates, get the coordinates in imageRect,
 // reversing the scaling and translation done by fitRect
-export function clientToImageRect(imageRect, fittedRect, clientRect) {
+export function clientToImageRect(
+  imageRect,
+  fittedRect,
+  clientRectToTransform
+) {
   const scale = imageRect.width / fittedRect.width;
   return {
-    left: (clientRect.left - fittedRect.left) * scale,
-    top: (clientRect.top - fittedRect.top) * scale,
-    width: clientRect.width * scale,
-    height: clientRect.height * scale,
+    left: (clientRectToTransform.left - fittedRect.left) * scale,
+    top: (clientRectToTransform.top - fittedRect.top) * scale,
+    width: clientRectToTransform.width * scale,
+    height: clientRectToTransform.height * scale,
   };
 }
 
-// Given a rect (clientRect) in client coordinates, get the coordinates in imageRect,
-// reversing the scaling and translation done by fitRect
-// export function imageToClientRect(imageRect, fittedRect, clientRect) {
-//   const scale = fittedRect.width / imageRect.width;
-//   return {
-//     left: (clientRect.left - fittedRect.left) * scale,
-//     top: (clientRect.top - fittedRect.top) * scale,
-//     width: clientRect.width * scale,
-//     height: clientRect.height * scale,
-//   };
-// }
+// Given a rect (imageRect) in image coordinates, get the coordinates in clientRect,
+export function imageToClientRect(imageRect, fittedRect, imageRectToTransform) {
+  const scale = fittedRect.width / imageRect.width;
+  return {
+    left: imageRectToTransform.left * scale + fittedRect.left,
+    top: imageRectToTransform.top * scale + fittedRect.top,
+    width: imageRectToTransform.width * scale,
+    height: imageRectToTransform.height * scale,
+  };
+}
 
 // Assume imageRect and clientRect are (left=0, top=0)
 // Return: fittedRect, which scales and translate the image, such that when

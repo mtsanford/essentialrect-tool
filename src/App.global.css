@@ -91,14 +91,15 @@ a:hover {
   position: absolute;
   z-index: 200;
   border: 2px dashed white;
-  pointer-events: 'none';
+  pointer-events: none;
 }
 
 .image-viewer-essential-rect {
   position: absolute;
   z-index: 199;
-  border: 2px solid rgba(255, 255, 255, .5);
-  pointer-events: 'none';
+  border: 2px solid white;
+  pointer-events: none;
+  mix-blend-mode: difference;
 }
 
 .image-viewer-overlay {
@@ -111,6 +112,7 @@ a:hover {
 .image-viewer-image {
   position: absolute;
   z-index: 0;
+  pointer-events: none;
 }
 
 
