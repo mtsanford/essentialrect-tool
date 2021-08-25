@@ -35,6 +35,18 @@ export function clientToImageRect(imageRect, fittedRect, clientRect) {
   };
 }
 
+// Given a rect (clientRect) in client coordinates, get the coordinates in imageRect,
+// reversing the scaling and translation done by fitRect
+// export function imageToClientRect(imageRect, fittedRect, clientRect) {
+//   const scale = fittedRect.width / imageRect.width;
+//   return {
+//     left: (clientRect.left - fittedRect.left) * scale,
+//     top: (clientRect.top - fittedRect.top) * scale,
+//     width: clientRect.width * scale,
+//     height: clientRect.height * scale,
+//   };
+// }
+
 // Assume imageRect and clientRect are (left=0, top=0)
 // Return: fittedRect, which scales and translate the image, such that when
 // shown in clientRect, optimally shows the essentialRect of the image.

@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { pathToUrl, clipRect } from '../lib/util';
 import { fitRect, clientToImageRect } from '../lib/fit-essential-rect';
 import { currentImageActions } from '../store/current-image-slice';
+import useClientRect from '../hooks/use-client-rect';
 
 const imagePositionDefault = {
   dragging: false,
@@ -81,14 +82,14 @@ const imagePositionReducer = (state, action) => {
     return;
   }
 
-  if (action.type === 'resize') {
-    state.renderedImageRect = fitRect(
-      state.imageRect,
-      state.essentialRect,
-      normalizedClientRect
-    );
-    return;
-  }
+  // if (action.type === 'resize') {
+  //   state.renderedImageRect = fitRect(
+  //     state.imageRect,
+  //     state.essentialRect,
+  //     normalizedClientRect
+  //   );
+  //   return;
+  // }
 
   if (action.type === 'mouseDown') {
     state.startMousePos = mousePos;
@@ -128,20 +129,28 @@ const imagePositionReducer = (state, action) => {
     const clipped = clipRect(essentialRect, state.imageRect);
     if (clipped.width > 0 && clipped.height > 0) {
       state.essentialRect = clipped;
-      state.renderedImageRect = fitRect(
-        state.imageRect,
-        state.essentialRect,
-        normalizedClientRect
-      );
+      // state.renderedImageRect = fitRect(
+      //   state.imageRect,
+      //   state.essentialRect,
+      //   normalizedClientRect
+      // );
     }
     state.dragging = false;
     return;
   }
 };
 
+const getMousePos = (event) => ({
+  x: event.nativeEvent.offsetX,
+  y: event.nativeEvent.offsetY,
+});
+
 const ImageViewer = (props) => {
+  let imageStyles;
+  let essentialRectStyles;
+
   const dispatch = useDispatch();
-  const imageViewerRef = useRef();
+  const [imageViewerRef, clientRect] = useClientRect();
   const currentImage = useSelector((state) => state.currentImage);
   const imagePath = currentImage.filePath;
   const imageUrl = pathToUrl(imagePath);
@@ -151,91 +160,54 @@ const ImageViewer = (props) => {
     imagePositionDefault
   );
 
+  const drawImage = currentImage.isValid && clientRect;
+
   useEffect(() => {
-    if (!currentImage.isValid || !imageViewerRef.current) {
+    if (!drawImage) {
       return;
     }
 
-    const clientRect = imageViewerRef.current.getBoundingClientRect();
-    const { imageRect } = currentImage;
     positionDispatch({
       type: 'init',
       payload: {
         clientRect,
-        imageRect,
+        imageRect: currentImage.imageRect,
       },
     });
   }, [currentImage.isValid, currentImage.filePath, positionDispatch]);
 
   useEffect(() => {
-    const imageViewerElement = imageViewerRef.current;
-    const resizeHandler = (entries) => {
-      const clientRect = {
-        left: 0,
-        top: 0,
-        width: entries[0].contentRect.width,
-        height: entries[0].contentRect.height,
-      };
-
-      positionDispatch({
-        type: 'resize',
-        payload: {
-          clientRect,
-        },
-      });
-    };
-    const ro = new ResizeObserver(resizeHandler);
-    ro.observe(imageViewerElement);
-    return () => ro.unobserve(imageViewerElement);
-  }, []);
-
-  useEffect(() => {
     dispatch(currentImageActions.setEssentialRect(positionState.essentialRect));
-  }, [positionState.essentialRect, dispatch])
+  }, [positionState.essentialRect, dispatch]);
 
-  const mouseDownHandler = (event) => {
-    const clientRect = imageViewerRef.current.getBoundingClientRect();
-    const mousePos = { x: event.clientX, y: event.clientY };
+  if (drawImage) {
+    const renderedImageRect = fitRect(
+      currentImage.imageRect,
+      currentImage.imageRect,
+      clientRect
+    );
+    imageStyles = {
+      position: 'absolute',
+      left: `${renderedImageRect.left}px`,
+      top: `${renderedImageRect.top}px`,
+      width: `${renderedImageRect.width}px`,
+      height: `${renderedImageRect.height}px`,
+      pointerEvents: 'none',
+    };
+
+    essentialRectStyles = {};
+  }
+
+  const mouseHandler = (type, event) => {
+    // console.log(type);
+    // console.log(event);
     positionDispatch({
-      type: 'mouseDown',
+      type,
       payload: {
         clientRect,
-        mousePos,
+        mousePos: getMousePos(event),
       },
     });
-  };
-
-  const mouseMoveHandler = (event) => {
-    const clientRect = imageViewerRef.current.getBoundingClientRect();
-    const mousePos = { x: event.clientX, y: event.clientY };
-    positionDispatch({
-      type: 'mouseMove',
-      payload: {
-        clientRect,
-        mousePos,
-      },
-    });
-  };
-
-  const mouseUpHander = (event) => {
-    const clientRect = imageViewerRef.current.getBoundingClientRect();
-    const mousePos = { x: event.clientX, y: event.clientY };
-    positionDispatch({
-      type: 'mouseUp',
-      payload: {
-        clientRect,
-        mousePos,
-      },
-    });
-  };
-
-  const imageStyles = {
-    position: 'absolute',
-    left: `${positionState.renderedImageRect.left}px`,
-    top: `${positionState.renderedImageRect.top}px`,
-    width: `${positionState.renderedImageRect.width}px`,
-    height: `${positionState.renderedImageRect.height}px`,
-    pointerEvents: 'none',
   };
 
   const selectStyles = {
@@ -251,19 +223,25 @@ const ImageViewer = (props) => {
   return (
     <div className="image-viewer" ref={imageViewerRef}>
       <div className="image-viewer-select" style={selectStyles} />
+      {drawImage && (<div
+        className="image-viewer-essential-rect"
+        style={essentialRectStyles}
+      />)}
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
       <div
         className="image-viewer-overlay"
-        onMouseDown={mouseDownHandler}
-        onMouseMove={mouseMoveHandler}
-        onMouseUp={mouseUpHander}
+        onMouseDown={mouseHandler.bind(this, 'mouseDown')}
+        onMouseMove={mouseHandler.bind(this, 'mouseMove')}
+        onMouseUp={mouseHandler.bind(this, 'mouseUp')}
       />
-      <img
-        className="image-viewer-image"
-        src={imageUrl}
-        alt=""
-        style={imageStyles}
-      />
+      {drawImage && (
+        <img
+          className="image-viewer-image"
+          src={imageUrl}
+          alt=""
+          style={imageStyles}
+        />
+      )}
     </div>
   );
 };

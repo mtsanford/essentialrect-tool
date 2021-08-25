@@ -90,7 +90,14 @@ a:hover {
 .image-viewer-select {
   position: absolute;
   z-index: 200;
-  border: 1px dashed white;
+  border: 2px dashed white;
+  pointer-events: 'none';
+}
+
+.image-viewer-essential-rect {
+  position: absolute;
+  z-index: 199;
+  border: 2px solid rgba(255, 255, 255, .5);
   pointer-events: 'none';
 }
 
