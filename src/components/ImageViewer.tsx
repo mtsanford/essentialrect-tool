@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { MouseEvent, MouseEventHandler, useEffect } from 'react';
 import { useImmerReducer } from 'use-immer';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { pathToUrl, clipRect } from '../lib/util';
+import { Rect, Point } from '../model/Rect';
 import {
   fitRect,
   clientToImageRect,
@@ -11,15 +12,30 @@ import {
 import { currentImageActions } from '../store/current-image-slice';
 import useClientRect from '../hooks/use-client-rect';
 
-const selectDefault = {
+type SelectState = {
+  dragging: boolean;
+  startMousePos: { x: number; y: number };
+  selectRect: Rect;
+  calculatedEssentialRect: Rect;
+};
+
+type SelectAction =
+  | { type: 'mouseDown'; payload: { mousePos: Point } }
+  | { type: 'mouseMove'; payload: { mousePos: Point } }
+  | {
+      type: 'mouseUp';
+      payload: { mousePos: Point, imageRect: Rect; renderedImageRect: Rect };
+    };
+
+const selectDefault: SelectState = {
   dragging: false,
-  startMousePos: null,
-  selectRect: null,
-  calculatedEssentialRect: null,
+  startMousePos: { x: 0, y: 0 },
+  selectRect: { left: 0, top: 0, width: 0, height: 0 },
+  calculatedEssentialRect: { left: 0, top: 0, width: 0, height: 0 },
 };
 
 // IMPORTANT: Using immer!
-const selectReducer = (state, action) => {
+const selectReducer = (state: SelectState, action: SelectAction) => {
   if (action.type === 'mouseDown') {
     const { mousePos } = action.payload;
     state.startMousePos = mousePos;
@@ -60,12 +76,7 @@ const selectReducer = (state, action) => {
   }
 };
 
-const getMousePos = (event) => ({
-  x: event.nativeEvent.offsetX,
-  y: event.nativeEvent.offsetY,
-});
-
-const stylesFromRect = (rect) => ({
+const stylesFromRect = (rect: Rect) => ({
   left: `${rect.left}px`,
   top: `${rect.top}px`,
   width: `${rect.width}px`,
@@ -75,8 +86,8 @@ const stylesFromRect = (rect) => ({
 const ImageViewer: React.FC = () => {
   let imageStyles;
   let essentialRectStyles;
-  let renderedImageRect;
-  let essentialRectClient;
+  let renderedImageRect: Rect;
+  let essentialRectClient: Rect;
   let selectStyles;
 
   const dispatch = useDispatch();
@@ -114,14 +125,46 @@ const ImageViewer: React.FC = () => {
     if (dragging) selectStyles = stylesFromRect(selectRect);
   }
 
-  const mouseHandler = (type, event) => {
+  const mouseDownHandler: MouseEventHandler<HTMLDivElement> = (
+    event: MouseEvent
+  ) => {
     selectDispatch({
-      type,
+      type: 'mouseDown',
       payload: {
-        clientRect,
+        mousePos: {
+          x: event.nativeEvent.offsetX,
+          y: event.nativeEvent.offsetY,
+        },
+      },
+    });
+  };
+
+  const mouseMoveHandler: MouseEventHandler<HTMLDivElement> = (
+    event: MouseEvent
+  ) => {
+    selectDispatch({
+      type: 'mouseMove',
+      payload: {
+        mousePos: {
+          x: event.nativeEvent.offsetX,
+          y: event.nativeEvent.offsetY,
+        },
+      },
+    });
+  };
+
+  const mouseUpHandler: MouseEventHandler<HTMLDivElement> = (
+    event: MouseEvent
+  ) => {
+    selectDispatch({
+      type: 'mouseUp',
+      payload: {
         imageRect,
         renderedImageRect,
-        mousePos: getMousePos(event),
+        mousePos: {
+          x: event.nativeEvent.offsetX,
+          y: event.nativeEvent.offsetY,
+        },
       },
     });
   };
@@ -140,9 +183,9 @@ const ImageViewer: React.FC = () => {
           <div
             className="image-viewer-overlay"
             role="presentation"
-            onMouseDown={mouseHandler.bind(this, 'mouseDown')}
-            onMouseMove={mouseHandler.bind(this, 'mouseMove')}
-            onMouseUp={mouseHandler.bind(this, 'mouseUp')}
+            onMouseDown={mouseDownHandler}
+            onMouseMove={mouseMoveHandler}
+            onMouseUp={mouseUpHandler}
           />
           <img
             className="image-viewer-image"

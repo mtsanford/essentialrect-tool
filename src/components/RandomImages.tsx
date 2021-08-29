@@ -4,8 +4,6 @@ import path from 'path';
 import React, { useEffect } from 'react';
 import useListReducer from '../hooks/use-list-reducer';
 
-import log from './lib/log';
-
 import ImageGrid from './ImageGrid';
 
 const imagePathsFromDir = (folder: string, paths: string[]) => {

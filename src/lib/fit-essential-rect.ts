@@ -1,3 +1,5 @@
+import Rect from '../model/Rect';
+
 // image = | a |  e  |          b          |
 // view  = |   v    |
 
@@ -8,7 +10,7 @@
 
 // i2 = | a |  e  | a |   (surrounded by lesser of a or b)
 
-export function fitLine(a, e, b, v) {
+export function fitLine(a: number, e: number, b: number, v: number): number {
   const i = a + e + b; // size of entire image line
   const i2 = a > b ? e + 2 * b : e + 2 * a; // essential surrounded by 2X the shorter of a or b
 
@@ -26,10 +28,10 @@ export function fitLine(a, e, b, v) {
 // Given a rect (clientRectToTransform) in client coordinates, get the coordinates in imageRect,
 // reversing the scaling and translation done by fitRect
 export function clientToImageRect(
-  imageRect,
-  fittedRect,
-  clientRectToTransform
-) {
+  imageRect: Rect,
+  fittedRect: Rect,
+  clientRectToTransform: Rect
+): Rect {
   const scale = imageRect.width / fittedRect.width;
   return {
     left: (clientRectToTransform.left - fittedRect.left) * scale,
@@ -40,7 +42,11 @@ export function clientToImageRect(
 }
 
 // Given a rect (imageRect) in image coordinates, get the coordinates in clientRect,
-export function imageToClientRect(imageRect, fittedRect, imageRectToTransform) {
+export function imageToClientRect(
+  imageRect: Rect,
+  fittedRect: Rect,
+  imageRectToTransform: Rect
+): Rect {
   const scale = fittedRect.width / imageRect.width;
   return {
     left: imageRectToTransform.left * scale + fittedRect.left,
@@ -53,28 +59,34 @@ export function imageToClientRect(imageRect, fittedRect, imageRectToTransform) {
 // Assume imageRect and clientRect are (left=0, top=0)
 // Return: fittedRect, which scales and translate the image, such that when
 // shown in clientRect, optimally shows the essentialRect of the image.
-export function fitRect(imageRect, essentialRect, clientRect) {
+export function fitRect(
+  imageRect: Rect,
+  essentialRect: Rect,
+  clientRect: Rect
+): Rect {
   // How much do we have to scale image to fit essential part in client?
   // We need to pick the smaller of these two
   const hscale = clientRect.width / essentialRect.width;
   const vscale = clientRect.height / essentialRect.height;
   const scale = Math.min(hscale, vscale);
 
-  const scaledImageRect = {
+  const scaledImageRect: Rect = {
     left: 0,
     top: 0,
     width: imageRect.width * scale,
     height: imageRect.height * scale,
   };
 
-  const scaledEssentialRect = {
+  const scaledEssentialRect: Rect = {
     left: essentialRect.left * scale,
     top: essentialRect.top * scale,
     width: essentialRect.width * scale,
     height: essentialRect.height * scale,
   };
 
-  const fittedRect = {
+  const fittedRect: Rect = {
+    left: 0,
+    top: 0,
     width: imageRect.width * scale,
     height: imageRect.height * scale,
   };
@@ -102,7 +114,7 @@ export function fitRect(imageRect, essentialRect, clientRect) {
   }
 
   // @#%&! Jest thinks -0 and 0 are different numbers
-  const adjustedFittedRect = {
+  const adjustedFittedRect: Rect = {
     top: fittedRect.top + 0,
     left: fittedRect.left + 0,
     width: fittedRect.width + 0,
