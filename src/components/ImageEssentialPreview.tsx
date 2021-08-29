@@ -5,17 +5,20 @@ import { pathToUrl, clipRect, normalizeRect } from '../lib/util';
 import { fitRect, clientToImageRect } from '../lib/fit-essential-rect';
 import useClientRect from '../hooks/use-client-rect';
 import log from '../lib/log';
+import AspectRatio from '../model/AspectRatio';
 
 const imageContainerFit = 0.91; // % of client to fill
 const imageContainerBorder = 0.015; // width of border as % of client
 const imageContainerFont = 0.05;
 
 function calcImageContainerRect(clientRect, aspectRatio) {
-  let imageContainerRect, borderSize;
+  let imageContainerRect;
+  let borderSize;
+
   if (aspectRatio > 1) {
     let width = clientRect.width * imageContainerFit;
     if (aspectRatio < 1.3) {
-      width = width * 0.8;
+      width *= 0.8;
     }
     const height = width / aspectRatio;
     borderSize = clientRect.width * imageContainerBorder;
@@ -28,14 +31,14 @@ function calcImageContainerRect(clientRect, aspectRatio) {
   } else {
     let height = clientRect.height * imageContainerFit;
     if (aspectRatio > 0.75) {
-      height = height * 0.5;
+      height *= 0.5;
     }
-    height = height * 0.5;
+    height *= 0.5;
     const width = height * aspectRatio;
     borderSize = clientRect.height * imageContainerBorder;
     imageContainerRect = {
-      height: height,
-      width: width,
+      height,
+      width,
       top: clientRect.height * imageContainerBorder - borderSize,
       left: (clientRect.width - width) / 2 - borderSize,
     };
@@ -43,7 +46,9 @@ function calcImageContainerRect(clientRect, aspectRatio) {
   return { imageContainerRect, borderSize };
 }
 
-const ImageEssentialPreview = (props) => {
+const ImageEssentialPreview: React.FC<{
+  aspectRatioInfo: AspectRatio;
+}> = ({ aspectRatioInfo }) => {
   let imageUrl;
   let imageStyles;
   let textStyles;
@@ -59,7 +64,7 @@ const ImageEssentialPreview = (props) => {
   const [ref, clientRect] = useClientRect();
   const currentImage = useSelector((state) => state.currentImage);
 
-  const { aspectRatio, name: aspectName } = props.aspectRatioInfo;
+  const { aspectRatio, name: aspectName, ratioText } = aspectRatioInfo;
   const landscape = aspectRatio >= 1;
 
   const renderContainer = !!clientRect;
@@ -86,8 +91,7 @@ const ImageEssentialPreview = (props) => {
       sizeMultiplier = imageContainerFit * 0.8;
     } else if (aspectRatio > 0.74 && aspectRatio < 1.34) {
       sizeMultiplier = imageContainerFit * 0.9;
-    }
-    else {
+    } else {
       sizeMultiplier = imageContainerFit;
     }
 
@@ -119,8 +123,8 @@ const ImageEssentialPreview = (props) => {
     fontSize = clientRect.width * imageContainerFont;
 
     textStyles = {
-      fontSize
-    }
+      fontSize,
+    };
   }
 
   if (renderImage) {
@@ -158,7 +162,9 @@ const ImageEssentialPreview = (props) => {
             />
           )}
         </div>
-        <div className="image-essential-text" style={textStyles}>{aspectName}</div>
+        <div className="image-essential-text" style={textStyles}>
+          {`${aspectName} ${ratioText}`}
+        </div>
       </div>
     </div>
   );

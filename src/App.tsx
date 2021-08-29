@@ -49,10 +49,6 @@ export default function App() {
     return () => window.removeEventListener('keydown', keydownListener);
   }, []);
 
-  const aspectRatioInfo = {
-    aspectRatio: 16 / 9,
-  };
-
   return (
     <SplitterLayout customClassName="imgjoy-splitter-layout">
       {showPreview && <ImageEssentialGrid />}

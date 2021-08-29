@@ -1,15 +1,14 @@
+import fs from 'fs';
+import path from 'path';
+
 import React, { useEffect } from 'react';
 import useListReducer from '../hooks/use-list-reducer';
-
-import fs, { Stats } from 'fs';
-import path from 'path';
 
 import log from './lib/log';
 
 import ImageGrid from './ImageGrid';
 
-
-const imagePathsFromDir = (folder, paths) => {
+const imagePathsFromDir = (folder: string, paths: string[]) => {
   const imageFileExtensions = ['.jpg', '.jpeg', '.webp', '.gif', '.png'];
   return paths
     .filter((fileName) =>
@@ -18,8 +17,11 @@ const imagePathsFromDir = (folder, paths) => {
     .map((fileName: string) => path.join(folder, fileName).toString());
 };
 
-const RandomImages = ({ picFolder }) => {
-  const [{ fullList: imageFiles, currentBunch: imageBunch }, dispatchList] = useListReducer(16);
+const RandomImages: React.FC<{ picFolder: string }> = ({ picFolder }) => {
+  const [
+    { fullList: imageFiles, currentBunch: imageBunch },
+    dispatchList,
+  ] = useListReducer(16);
 
   useEffect(() => {
     const keydownListener = ({ key }) => {
@@ -34,7 +36,7 @@ const RandomImages = ({ picFolder }) => {
     window.addEventListener('keydown', keydownListener);
 
     return () => window.removeEventListener('keydown', keydownListener);
-  }, []);
+  }, [dispatchList]);
 
   useEffect(() => {
     let canceled = false;
@@ -59,7 +61,7 @@ const RandomImages = ({ picFolder }) => {
     return () => {
       canceled = true;
     };
-  }, [picFolder]);
+  }, [picFolder, dispatchList]);
 
   if (!imageBunch || imageBunch.length === 0 || imageFiles.length === 0) {
     return <div className="randomimages-no-images">No images found</div>;

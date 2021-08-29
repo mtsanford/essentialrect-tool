@@ -67,8 +67,7 @@ const useListReducer = (bunchSize = 16) => {
     fullList: [],
     shuffleIndex: [],
     currentBunch: Array(bunchSize).fill(''),
-    // eslint-disable-next-line object-shorthand
-    bunchSize: bunchSize,
+    bunchSize,
     offset: 0,
   };
 

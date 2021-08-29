@@ -1,41 +1,49 @@
 import React from 'react';
 
+import AspectRatio from '../model/AspectRatio';
+
 import ImageEssentialPreview from './ImageEssentialPreview';
 
-const ImageEssentialGrid = (props) => {
-  const aspectRatios = [
-    {
-      name: "HTDV - iPhone 8 - MacBook (16:9)",
-      aspectRatio: 16 / 9,
-      id: 1,
-    },
-    {
-      name: "HTDV - iPhone 8 (9:16)",
-      aspectRatio: 9 / 16,
-      id: 2,
-    },
-    {
-      name: "Square",
-      aspectRatio: 1,
-      id: 3,
-    },
-    {
-      name: "iPad (4:3)",
-      aspectRatio: 4 / 3,
-      id: 4,
-    },
-    {
-      name: "iPhone 11/12 (19.5:9)",
-      aspectRatio: 19.5 / 9,
-      id: 5,
-    },
-    {
-      name: "iPhone 11/12 (9:19.5)",
-      aspectRatio: 9 / 19.5,
-      id: 6,
-    },
-  ];
+const aspectRatios: AspectRatio[] = [
+  {
+    name: 'HTDV - iPhone 8 - MacBook',
+    ratioText: '(16:9)',
+    aspectRatio: 16 / 9,
+    id: '16:9',
+  },
+  {
+    name: 'HTDV - iPhone 8',
+    ratioText: '(9:16)',
+    aspectRatio: 9 / 16,
+    id: '(9:16)',
+  },
+  {
+    name: 'Square',
+    ratioText: '(1:1)',
+    aspectRatio: 1,
+    id: '(1:1)',
+  },
+  {
+    name: 'iPad (4:3)',
+    ratioText: '(4:3)',
+    aspectRatio: 4 / 3,
+    id: '(4:3)',
+  },
+  {
+    name: 'iPhone 11/12',
+    ratioText: '(19.5:9)',
+    aspectRatio: 19.5 / 9,
+    id: '(19.5:9)',
+  },
+  {
+    name: 'iPhone 11/12',
+    ratioText: '(9:19.5)',
+    aspectRatio: 9 / 19.5,
+    id: '(9:19.5)',
+  },
+];
 
+const ImageEssentialGrid: React.FC = () => {
   return (
     <div className="image-essential-grid">
       {aspectRatios.map((aspectRatioInfo) => (

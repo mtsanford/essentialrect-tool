@@ -8,11 +8,9 @@ import log from '../lib/log';
 
 import { setCurrentImage } from '../store/current-image-actions';
 
-
-const ImageGridItem = (props) => {
+const ImageGridItem: React.FC<{ imagePath: string }> = ({ imagePath }) => {
   const dispatch = useDispatch();
-  const imageRef = useRef();
-  const { imagePath } = props;
+  const imageRef = useRef<HTMLDivElement>(null);
   const imageUrl = pathToUrl(imagePath);
 
   useDoubleClick({

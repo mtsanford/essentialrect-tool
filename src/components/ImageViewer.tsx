@@ -72,7 +72,7 @@ const stylesFromRect = (rect) => ({
   height: `${rect.height}px`,
 });
 
-const ImageViewer = (props) => {
+const ImageViewer: React.FC = () => {
   let imageStyles;
   let essentialRectStyles;
   let renderedImageRect;
