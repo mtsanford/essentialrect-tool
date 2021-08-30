@@ -6,13 +6,13 @@ import ImageEssentialPreview from './ImageEssentialPreview';
 
 const aspectRatios: AspectRatio[] = [
   {
-    name: 'HTDV - iPhone 8 - MacBook',
+    name: 'HD - iPhone 6/7/8',
     ratioText: '(16:9)',
     aspectRatio: 16 / 9,
     id: '16:9',
   },
   {
-    name: 'HTDV - iPhone 8',
+    name: 'HD - iPhone 6/7/8',
     ratioText: '(9:16)',
     aspectRatio: 9 / 16,
     id: '(9:16)',
@@ -24,7 +24,7 @@ const aspectRatios: AspectRatio[] = [
     id: '(1:1)',
   },
   {
-    name: 'iPad (4:3)',
+    name: 'iPad',
     ratioText: '(4:3)',
     aspectRatio: 4 / 3,
     id: '(4:3)',

@@ -3,8 +3,6 @@ import { ipcRenderer } from 'electron';
 
 import SplitterLayout from 'react-splitter-layout';
 
-import log from './lib/log';
-
 import RandomImages from './components/RandomImages';
 import ImageViewer from './components/ImageViewer';
 import ImageEssentialGrid from './components/ImageEssentialGrid';

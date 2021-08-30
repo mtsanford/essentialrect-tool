@@ -1,12 +1,13 @@
 import { useCallback, useRef, useState } from 'react';
+import { Rect, emptyRect } from '../model/Rect';
 
 const useClientRect = () => {
   const ref = useRef(null);
   const [resizeObserver, setResizeObserver] = useState(null);
-  const [clientRect, setClientRect] = useState(null);
+  const [clientRect, setClientRect] = useState<Rect>(emptyRect);
 
   const resizeHandler = useCallback((entries) => {
-    const newClientRect = {
+    const newClientRect: Rect = {
       left: 0,
       top: 0,
       width: entries[0].contentRect.width,

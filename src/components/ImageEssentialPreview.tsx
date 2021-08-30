@@ -1,10 +1,9 @@
 import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 
-import { pathToUrl, clipRect, normalizeRect } from '../lib/util';
+import { pathToUrl } from '../lib/util';
 import { fitRect, clientToImageRect } from '../lib/fit-essential-rect';
 import useClientRect from '../hooks/use-client-rect';
-import log from '../lib/log';
 import AspectRatio from '../model/AspectRatio';
 
 const imageContainerFit = 0.91; // % of client to fill

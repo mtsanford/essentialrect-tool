@@ -1,10 +1,8 @@
-import React, { useRef } from 'react';
+import React, { MouseEvent, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import useDoubleClick from 'use-double-click';
 import { ipcRenderer } from 'electron';
 import { pathToUrl } from '../lib/util';
-
-import log from '../lib/log';
 
 import { setCurrentImage } from '../store/current-image-actions';
 
@@ -23,7 +21,7 @@ const ImageGridItem: React.FC<{ imagePath: string }> = ({ imagePath }) => {
     ref: imageRef,
   });
 
-  const dragStartHandler = (event) => {
+  const dragStartHandler = (event: MouseEvent) => {
     event.preventDefault();
     ipcRenderer.send('ondragstart', imagePath);
   };

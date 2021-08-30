@@ -92,6 +92,7 @@ a:hover {
   z-index: 200;
   border: 3px dashed white;
   pointer-events: none;
+  mix-blend-mode: difference;
 }
 
 .image-viewer-essential-rect {

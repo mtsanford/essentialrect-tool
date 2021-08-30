@@ -45,9 +45,9 @@ const ImageViewer: React.FC = () => {
   const imageUrl = pathToUrl(filePath);
 
   // do we have a valid image and rect to draw it in?
-  const ready = isValid && clientRect;
+  const ready = isValid && !rectEmpty(clientRect);
 
-  if (ready) {
+  if (ready && clientRect) {
     renderedImageRect = fitRect(imageRect, imageRect, clientRect);
     imageStyles = stylesFromRect(renderedImageRect);
     essentialRectClient = imageToClientRect(
@@ -102,7 +102,7 @@ const ImageViewer: React.FC = () => {
 
     setDragging(false);
     if (!rectEmpty(clipped)) {
-      dispatch(currentImageActions.setEssentialRect(newEssentialRect));
+      dispatch(currentImageActions.setEssentialRect(clipped));
     }
   };
 
