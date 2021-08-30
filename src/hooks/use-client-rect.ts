@@ -3,7 +3,7 @@ import { Rect, emptyRect } from '../model/Rect';
 
 const useClientRect = () => {
   const ref = useRef(null);
-  const [resizeObserver, setResizeObserver] = useState(null);
+  const [resizeObserver, setResizeObserver] = useState<ResizeObserver>();
   const [clientRect, setClientRect] = useState<Rect>(emptyRect);
 
   const resizeHandler = useCallback((entries) => {
@@ -26,12 +26,11 @@ const useClientRect = () => {
       const ro = new ResizeObserver(resizeHandler);
       ro.observe(domElement);
       setResizeObserver(ro);
-      // console.log('setRef have domElement');
     }
     ref.current = domElement;
   }, []);
 
-  return [setRef, clientRect];
+  return [setRef, clientRect] as const;
 };
 
 export default useClientRect;

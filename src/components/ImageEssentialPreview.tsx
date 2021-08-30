@@ -2,15 +2,16 @@ import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 
 import { pathToUrl } from '../lib/util';
-import { fitRect, clientToImageRect } from '../lib/fit-essential-rect';
+import { fitRect } from '../lib/fit-essential-rect';
 import useClientRect from '../hooks/use-client-rect';
+import { Rect, rectEmpty } from '../model/Rect';
 import AspectRatio from '../model/AspectRatio';
 
 const imageContainerFit = 0.91; // % of client to fill
 const imageContainerBorder = 0.015; // width of border as % of client
 const imageContainerFont = 0.05;
 
-function calcImageContainerRect(clientRect, aspectRatio) {
+function calcImageContainerRect(clientRect: Rect, aspectRatio: number) {
   let imageContainerRect;
   let borderSize;
 
@@ -22,8 +23,8 @@ function calcImageContainerRect(clientRect, aspectRatio) {
     const height = width / aspectRatio;
     borderSize = clientRect.width * imageContainerBorder;
     imageContainerRect = {
-      width: width,
-      height: height,
+      width,
+      height,
       left: (clientRect.width - width) / 2 - borderSize,
       top: (clientRect.height - height) / 2 - borderSize,
     };
@@ -50,81 +51,69 @@ const ImageEssentialPreview: React.FC<{
 }> = ({ aspectRatioInfo }) => {
   let imageUrl;
   let imageStyles;
-  let textStyles;
   let contentStyles = {};
-  let contentClasses;
-  let containerStyles;
-  let imageContainerRect;
+  let orientationClass;
+  let imageContainerRect: Rect;
   let borderSize;
   let sizeMultiplier;
-  let fontSize;
 
-  const imageContainerRef = useRef();
+  const imageContainerRef = useRef<HTMLDivElement>();
   const [ref, clientRect] = useClientRect();
   const currentImage = useSelector((state) => state.currentImage);
-
   const { aspectRatio, name: aspectName, ratioText } = aspectRatioInfo;
   const landscape = aspectRatio >= 1;
-
-  const renderContainer = !!clientRect;
-
+  const renderContainer = !rectEmpty(clientRect);
   const renderImage = renderContainer && currentImage.isValid;
 
-  if (renderContainer) {
-    ({ imageContainerRect, borderSize } = calcImageContainerRect(
-      clientRect,
-      aspectRatio
-    ));
+  ({ imageContainerRect, borderSize } = calcImageContainerRect(
+    clientRect,
+    aspectRatio
+  ));
 
-    contentStyles = {
-      height: clientRect.width,
-    };
+  contentStyles = {
+    height: clientRect.width,
+  };
 
-    const orientationClass = landscape
-      ? 'image-essential-landscape'
-      : 'image-essential-portrait';
-
-    contentClasses = `image-essential-grid-item-content ${orientationClass}`;
-
-    if (aspectRatio > 0.9 && aspectRatio < 1.1) {
-      sizeMultiplier = imageContainerFit * 0.8;
-    } else if (aspectRatio > 0.74 && aspectRatio < 1.34) {
-      sizeMultiplier = imageContainerFit * 0.9;
-    } else {
-      sizeMultiplier = imageContainerFit;
-    }
-
-    if (landscape) {
-      imageContainerRect = {
-        top: 0,
-        left: 0,
-        width: sizeMultiplier * clientRect.width,
-        height: (sizeMultiplier * clientRect.width) / aspectRatio,
-      };
-    } else {
-      imageContainerRect = {
-        top: 0,
-        left: 0,
-        width: sizeMultiplier * clientRect.width * aspectRatio,
-        height: sizeMultiplier * clientRect.width,
-      };
-    }
-
-    borderSize = clientRect.width * imageContainerBorder;
-
-    containerStyles = {
-      width: `${imageContainerRect.width}px`,
-      height: `${imageContainerRect.height}px`,
-      borderWidth: borderSize,
-      borderRadius: borderSize,
-    };
-
-    fontSize = clientRect.width * imageContainerFont;
-
-    textStyles = {
-      fontSize,
-    };
+  if (aspectRatio > 0.9 && aspectRatio < 1.1) {
+    sizeMultiplier = imageContainerFit * 0.8;
+  } else if (aspectRatio > 0.74 && aspectRatio < 1.34) {
+    sizeMultiplier = imageContainerFit * 0.9;
+  } else {
+    sizeMultiplier = imageContainerFit;
   }
+
+  if (landscape) {
+    imageContainerRect = {
+      top: 0,
+      left: 0,
+      width: sizeMultiplier * clientRect.width,
+      height: (sizeMultiplier * clientRect.width) / aspectRatio,
+    };
+    orientationClass = 'image-essential-landscape';
+  } else {
+    imageContainerRect = {
+      top: 0,
+      left: 0,
+      width: sizeMultiplier * clientRect.width * aspectRatio,
+      height: sizeMultiplier * clientRect.width,
+    };
+    orientationClass = 'image-essential-portrait';
+  }
+
+  const contentClasses = `image-essential-grid-item-content ${orientationClass}`;
+
+  borderSize = clientRect.width * imageContainerBorder;
+
+  const containerStyles = {
+    width: `${imageContainerRect.width}px`,
+    height: `${imageContainerRect.height}px`,
+    borderWidth: borderSize,
+    borderRadius: borderSize,
+  };
+
+  const fontSize = clientRect.width * imageContainerFont;
+
+  const textStyles = { fontSize };
 
   if (renderImage) {
     const renderedImageRect = fitRect(
@@ -147,20 +136,22 @@ const ImageEssentialPreview: React.FC<{
   return (
     <div className="image-essential-grid-item" ref={ref}>
       <div className={contentClasses} style={contentStyles}>
-        <div
-          className="image-essential-image-container"
-          style={containerStyles}
-          ref={imageContainerRef}
-        >
-          {renderImage && (
-            <img
-              className="image-essential-image"
-              src={imageUrl}
-              alt=""
-              style={imageStyles}
-            />
-          )}
-        </div>
+        {renderContainer && (
+          <div
+            className="image-essential-image-container"
+            style={containerStyles}
+            ref={imageContainerRef}
+          >
+            {renderImage && (
+              <img
+                className="image-essential-image"
+                src={imageUrl}
+                alt=""
+                style={imageStyles}
+              />
+            )}
+          </div>
+        )}
         <div className="image-essential-text" style={textStyles}>
           {`${aspectName} ${ratioText}`}
         </div>
