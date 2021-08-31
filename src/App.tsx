@@ -1,21 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { ipcRenderer } from 'electron';
 
 import SplitterLayout from 'react-splitter-layout';
 
-import RandomImages from './components/RandomImages';
 import ImageViewer from './components/ImageViewer';
 import ImageEssentialGrid from './components/ImageEssentialGrid';
+
+import { setCurrentImage } from './store/current-image-actions';
 
 import './App.global.css';
 import './App.global.scss';
 
 export default function App() {
+  const dispatch = useDispatch();
   const [imageFolder, setImageFolderState] = useState(
     localStorage.getItem('imageFolder') || '/'
   );
-
-  const [showPreview, setShowPreview] = useState(false);
+  const { filePath } = useSelector((state) => state.currentImage);
 
   // keyDownListener needs access to the value of imageFolder
   // on most recent render, not the one on first render which
@@ -29,17 +31,14 @@ export default function App() {
   useEffect(() => {
     const keydownListener = ({ key }) => {
       if (key === 'f') {
-        const reply = ipcRenderer.sendSync('select-dirs', {
-          defaultPath: imageFolderRef.current,
-        });
+        const reply = ipcRenderer.sendSync(
+          'select-file',
+          filePath ? { defaultPath: filePath } : {}
+        );
         if (reply) {
-          const newImageFolder = reply[0];
-          localStorage.setItem('imageFolder', newImageFolder);
-          setImageFolder(newImageFolder);
+          const newImagePath = reply[0];
+          dispatch(setCurrentImage(newImagePath));
         }
-      }
-      if (key === 'p') {
-        setShowPreview((oldValue) => !oldValue);
       }
     };
     window.addEventListener('keydown', keydownListener);
@@ -49,8 +48,7 @@ export default function App() {
 
   return (
     <SplitterLayout customClassName="imgjoy-splitter-layout">
-      {showPreview && <ImageEssentialGrid />}
-      {!showPreview && <RandomImages picFolder={imageFolder} />}
+      <ImageEssentialGrid />
       <ImageViewer />
     </SplitterLayout>
   );

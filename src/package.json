@@ -16,6 +16,7 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
+    "@types/react-splitter-layout": "^3.0.2",
     "@types/use-double-click": "^1.0.1"
   }
 }

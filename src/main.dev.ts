@@ -160,3 +160,22 @@ ipcMain.on('select-dirs', (event, arg) => {
     defaultPath: path.normalize(arg.defaultPath),
   });
 });
+
+ipcMain.on('select-file', (event, arg) => {
+  const filters = [
+    { name: 'Images', extensions: ['jpg', 'png', 'gif', 'jpeg', 'webp'] },
+    { name: 'All Files', extensions: ['*'] },
+  ];
+
+  const dialogOptions: Electron.OpenDialogSyncOptions = {
+    title: 'Select image',
+    properties: ['openFile'],
+    filters,
+  };
+
+  if (arg.defaultPath) {
+    dialogOptions.defaultPath = path.normalize(arg.defaultPath);
+  }
+
+  event.returnValue = dialog.showOpenDialogSync(mainWindow, dialogOptions);
+});
