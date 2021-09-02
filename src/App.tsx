@@ -47,7 +47,10 @@ export default function App() {
   }, []);
 
   return (
-    <SplitterLayout customClassName="imgjoy-splitter-layout">
+    <SplitterLayout
+      customClassName="imgjoy-splitter-layout"
+      percentage
+    >
       <ImageEssentialGrid />
       <ImageViewer />
     </SplitterLayout>
