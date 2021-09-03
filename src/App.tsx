@@ -6,6 +6,7 @@ import SplitterLayout from 'react-splitter-layout';
 
 import ImageViewer from './components/ImageViewer';
 import ImageEssentialGrid from './components/ImageEssentialGrid';
+import Controls from './components/Controls';
 
 import { setCurrentImage } from './store/current-image-actions';
 
@@ -47,11 +48,13 @@ export default function App() {
   }, []);
 
   return (
-    <SplitterLayout
-      customClassName="imgjoy-splitter-layout"
-      percentage
-    >
-      <ImageEssentialGrid />
+    <SplitterLayout customClassName="imgjoy-splitter-layout" percentage>
+      <div className="left-panel">
+        <Controls />
+        <div className="essential-grid-wrapper">
+          <ImageEssentialGrid />
+        </div>
+      </div>
       <ImageViewer />
     </SplitterLayout>
   );
