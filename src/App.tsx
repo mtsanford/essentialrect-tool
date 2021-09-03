@@ -48,7 +48,11 @@ export default function App() {
   }, []);
 
   return (
-    <SplitterLayout customClassName="imgjoy-splitter-layout" percentage>
+    <SplitterLayout
+      customClassName="imgjoy-splitter-layout"
+      primaryMinSize={240}
+      secondaryMinSize={240}
+    >
       <div className="left-panel">
         <Controls />
         <div className="essential-grid-wrapper">
