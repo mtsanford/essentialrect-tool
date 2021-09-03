@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const currentImageSlice = createSlice({
-  name: 'ui',
+  name: 'currentImage',
   initialState: {
     filePath: null,
     imageRect: null,

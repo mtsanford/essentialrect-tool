@@ -1,0 +1,28 @@
+.happy-button {
+  position: relative;
+  overflow: hidden;
+  border-style: solid;
+  border-color: #555;
+  padding: 3px;
+
+  &.happy-button-depressed {
+    background-color: #333;
+    border-top-width: 2px;
+    border-left-width: 2px;
+    border-bottom-width: 1px;
+    border-right-width: 1px;
+    .happy-button-content-wrapper {
+      position: relative;
+      // left:2px;
+      // top:2px;
+    }
+  }
+  &.happy-button-not-depressed {
+    border-top-width: 1px;
+    border-left-width: 1px;
+    border-bottom-width: 2px;
+    border-right-width: 2px;
+  }
+
+
+}

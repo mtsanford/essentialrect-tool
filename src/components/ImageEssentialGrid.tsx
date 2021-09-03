@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 import AspectRatio from '../model/AspectRatio';
 
@@ -44,8 +45,15 @@ const aspectRatios: AspectRatio[] = [
 ];
 
 const ImageEssentialGrid: React.FC = () => {
+  const previewColumns = useSelector((state) => state.ui.previewColumns);
+
+  const classes =
+    previewColumns > 1
+      ? 'image-essential-grid image-essential-grid-two-column'
+      : 'image-essential-grid';
+
   return (
-    <div className="image-essential-grid">
+    <div className={classes}>
       {aspectRatios.map((aspectRatioInfo) => (
         <ImageEssentialPreview
           aspectRatioInfo={aspectRatioInfo}

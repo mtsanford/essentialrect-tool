@@ -2,7 +2,10 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const uiSlice = createSlice({
   name: 'ui',
-  initialState: { notification: null },
+  initialState: {
+    notification: null,
+    previewColumns: 2,
+  },
   reducers: {
     showNotification(state, action) {
       state.notification = {
@@ -11,6 +14,9 @@ const uiSlice = createSlice({
         message: action.payload.message,
       };
     },
+    setPreviewColumns(state, action) {
+      state.previewColumns = action.payload;
+    }
   },
 });
 
