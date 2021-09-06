@@ -1,5 +1,4 @@
 import React, { MouseEvent, MouseEventHandler, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 
 import { pathToUrl } from '../lib/util';
 import {
@@ -16,7 +15,12 @@ import {
   clientToImageRect,
   imageToClientRect,
 } from '../lib/fit-essential-rect';
-import { currentImageActions } from '../store/current-image-slice';
+import {
+  currentImageActions,
+  selectCurrentImage,
+} from '../store/current-image-slice';
+
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import useClientRect from '../hooks/use-client-rect';
 
 const stylesFromRect = (rect: Rect) => ({
@@ -33,13 +37,13 @@ const ImageViewer: React.FC = () => {
   let essentialRectClient: Rect;
   let selectStyles;
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [dragging, setDragging] = useState<boolean>(false);
   const [startMousePos, setStartMousePos] = useState<Point>(emptyPoint);
   const [selectRect, setSelectRect] = useState<Rect>(emptyRect);
   const [imageViewerRef, clientRect] = useClientRect();
-  const { filePath, isValid, imageRect, essentialRect } = useSelector(
-    (state) => state.currentImage
+  const { filePath, isValid, imageRect, essentialRect } = useAppSelector(
+    selectCurrentImage
   );
 
   const imageUrl = pathToUrl(filePath);
@@ -47,7 +51,7 @@ const ImageViewer: React.FC = () => {
   // do we have a valid image and rect to draw it in?
   const ready = isValid && !rectEmpty(clientRect);
 
-  if (ready && clientRect) {
+  if (ready && clientRect && imageRect && essentialRect) {
     renderedImageRect = fitRect(imageRect, imageRect, clientRect);
     imageStyles = stylesFromRect(renderedImageRect);
     essentialRectClient = imageToClientRect(
@@ -93,6 +97,8 @@ const ImageViewer: React.FC = () => {
   };
 
   const mouseUpHandler: MouseEventHandler<HTMLDivElement> = () => {
+    if (!imageRect) return;
+
     const newEssentialRect = clientToImageRect(
       imageRect,
       renderedImageRect,

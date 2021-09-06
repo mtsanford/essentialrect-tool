@@ -1,13 +1,13 @@
 import React, { MouseEvent, useRef } from 'react';
-import { useDispatch } from 'react-redux';
 import useDoubleClick from 'use-double-click';
 import { ipcRenderer } from 'electron';
 import { pathToUrl } from '../lib/util';
+import { useAppDispatch } from '../store/hooks';
 
 import { setCurrentImage } from '../store/current-image-actions';
 
 const ImageGridItem: React.FC<{ imagePath: string }> = ({ imagePath }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const imageRef = useRef<HTMLDivElement>(null);
   const imageUrl = pathToUrl(imagePath);
 

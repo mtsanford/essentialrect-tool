@@ -1,11 +1,12 @@
 import React, { useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '../store/hooks';
 
 import { pathToUrl } from '../lib/util';
 import { fitRect } from '../lib/fit-essential-rect';
 import useClientRect from '../hooks/use-client-rect';
 import { Rect, rectEmpty } from '../model/Rect';
 import AspectRatio from '../model/AspectRatio';
+import { selectCurrentImage } from '../store/current-image-slice';
 
 const imageContainerFit = 0.91; // % of client to fill
 const imageContainerBorder = 0.015; // width of border as % of client
@@ -59,7 +60,7 @@ const ImageEssentialPreview: React.FC<{
 
   const imageContainerRef = useRef<HTMLDivElement>();
   const [ref, clientRect] = useClientRect();
-  const currentImage = useSelector((state) => state.currentImage);
+  const currentImage = useAppSelector(selectCurrentImage);
   const { aspectRatio, name: aspectName, ratioText } = aspectRatioInfo;
   const landscape = aspectRatio >= 1;
   const renderContainer = !rectEmpty(clientRect);
