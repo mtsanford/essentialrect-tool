@@ -155,3 +155,7 @@ MIT © [Electron React Boilerplate](https://github.com/electron-react-boilerplat
 [david-dev-url]: https://david-dm.org/electron-react-boilerplate/electron-react-boilerplate?type=dev
 [good-first-issue-image]: https://img.shields.io/github/issues/electron-react-boilerplate/electron-react-boilerplate/good%20first%20issue.svg?label=good%20first%20issues
 [good-first-issue-url]: https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues?q=is%3Aopen+is%3Aissue+label%3A"good+first+issue"
+
+## Attributions
+
+Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>

@@ -4,6 +4,8 @@ import { selectPreviewColumns, uiActions } from '../store/ui-slice';
 
 import HappyButton from './UI/HappyButton';
 
+import folderIcon from '../../assets/icons/folder.svg';
+
 const Single = () => {
   return (
     <div className="button single">
@@ -35,9 +37,18 @@ const Controls: React.FC = () => {
 
   const gridView = previewColumns > 1;
 
+  console.log(folderIcon);
+
   return (
     <div className="controls">
       <div className="controls-grid-buttons">
+      <HappyButton
+          token="folder"
+          onClick={buttonClickHandler}
+          depressed={false}
+        >
+          <img src={folderIcon} alt="" className="button-image" />
+        </HappyButton>
         <HappyButton
           token="single"
           onClick={buttonClickHandler}
