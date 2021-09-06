@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useAppSelector, useAppDispatch } from 'store/hooks';
+import { selectPreviewColumns } from '../store/ui-slice';
 
 import HappyButton from './UI/HappyButton';
 
@@ -25,8 +27,8 @@ const Grid = () => {
 };
 
 const Controls: React.FC = () => {
-  const dispatch = useDispatch();
-  const previewColumns = useSelector((state) => state.ui.previewColumns);
+  const dispatch = useAppDispatch();
+  const previewColumns = useAppSelector(selectPreviewColumns);
   // const [gridView, setGridView] = useState(false);
   const clickHandler = (event) => {};
 

@@ -14,7 +14,13 @@ import path from 'path';
 import { app, BrowserWindow, shell, protocol, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import ElectronStore from 'electron-store';
+
 import MenuBuilder from './menu';
+
+console.log(app.getPath('userData'));
+
+ElectronStore.initRenderer();
 
 export default class AppUpdater {
   constructor() {
