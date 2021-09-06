@@ -3,6 +3,7 @@ interface AspectRatio {
   ratioText: string;
   aspectRatio: number;
   id: string;
+  enabled: boolean;
 }
 
 export default AspectRatio;

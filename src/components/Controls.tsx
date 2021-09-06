@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useAppSelector, useAppDispatch } from 'store/hooks';
-import { selectPreviewColumns } from '../store/ui-slice';
+import React from 'react';
+import { useAppSelector, useAppDispatch } from '../store/hooks';
+import { selectPreviewColumns, uiActions } from '../store/ui-slice';
 
 import HappyButton from './UI/HappyButton';
-
-import { uiActions } from '../store/ui-slice';
 
 const Single = () => {
   return (
     <div className="button single">
-      <div className="square"></div>
+      <div className="square" />
     </div>
   );
 };
@@ -18,10 +15,10 @@ const Single = () => {
 const Grid = () => {
   return (
     <div className="button grid">
-      <div className="square"></div>
-      <div className="square"></div>
-      <div className="square"></div>
-      <div className="square"></div>
+      <div className="square" />
+      <div className="square" />
+      <div className="square" />
+      <div className="square" />
     </div>
   );
 };
@@ -29,18 +26,14 @@ const Grid = () => {
 const Controls: React.FC = () => {
   const dispatch = useAppDispatch();
   const previewColumns = useAppSelector(selectPreviewColumns);
-  // const [gridView, setGridView] = useState(false);
-  const clickHandler = (event) => {};
+  const clickHandler = () => {};
 
   const buttonClickHandler = (id: string) => {
-    console.log(id);
     const newColumns = id === 'double' ? 2 : 1;
-    console.log(uiActions);
     dispatch(uiActions.setPreviewColumns(newColumns));
   };
 
   const gridView = previewColumns > 1;
-  console.log(`gridview = ${gridView}`);
 
   return (
     <div className="controls">

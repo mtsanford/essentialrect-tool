@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { ipcRenderer } from 'electron';
 
 import SplitterLayout from 'react-splitter-layout';
@@ -8,17 +7,19 @@ import ImageViewer from './components/ImageViewer';
 import ImageEssentialGrid from './components/ImageEssentialGrid';
 import Controls from './components/Controls';
 
+import { useAppSelector, useAppDispatch } from './store/hooks';
+import { selectCurrentImage } from './store/current-image-slice';
 import { setCurrentImage } from './store/current-image-actions';
 
 import './App.global.css';
 import './App.global.scss';
 
 export default function App() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [imageFolder, setImageFolderState] = useState(
     localStorage.getItem('imageFolder') || '/'
   );
-  const { filePath } = useSelector((state) => state.currentImage);
+  const { filePath } = useAppSelector(selectCurrentImage);
 
   // keyDownListener needs access to the value of imageFolder
   // on most recent render, not the one on first render which

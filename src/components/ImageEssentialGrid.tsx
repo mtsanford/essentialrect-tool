@@ -1,51 +1,14 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 
-import AspectRatio from '../model/AspectRatio';
+import { useAppSelector } from '../store/hooks';
+import { selectAspectRatios } from '../store/config-slice';
+import { selectPreviewColumns } from '../store/ui-slice';
 
 import ImageEssentialPreview from './ImageEssentialPreview';
 
-const aspectRatios: AspectRatio[] = [
-  {
-    name: 'HD - iPhone 6/7/8',
-    ratioText: '(16:9)',
-    aspectRatio: 16 / 9,
-    id: '16:9',
-  },
-  {
-    name: 'HD - iPhone 6/7/8',
-    ratioText: '(9:16)',
-    aspectRatio: 9 / 16,
-    id: '(9:16)',
-  },
-  {
-    name: 'Square',
-    ratioText: '(1:1)',
-    aspectRatio: 1,
-    id: '(1:1)',
-  },
-  {
-    name: 'iPad',
-    ratioText: '(4:3)',
-    aspectRatio: 4 / 3,
-    id: '(4:3)',
-  },
-  {
-    name: 'iPhone 11/12',
-    ratioText: '(19.5:9)',
-    aspectRatio: 19.5 / 9,
-    id: '(19.5:9)',
-  },
-  {
-    name: 'iPhone 11/12',
-    ratioText: '(9:19.5)',
-    aspectRatio: 9 / 19.5,
-    id: '(9:19.5)',
-  },
-];
-
 const ImageEssentialGrid: React.FC = () => {
-  const previewColumns = useSelector((state) => state.ui.previewColumns);
+  const aspectRatios = useAppSelector(selectAspectRatios);
+  const previewColumns = useAppSelector(selectPreviewColumns);
 
   const classes =
     previewColumns > 1

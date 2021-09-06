@@ -1,4 +1,9 @@
-import React, { MouseEvent, MouseEventHandler, useState } from 'react';
+import React, {
+  MouseEvent,
+  MouseEventHandler,
+  useState,
+  CSSProperties,
+} from 'react';
 
 import { pathToUrl } from '../lib/util';
 import {
@@ -23,7 +28,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import useClientRect from '../hooks/use-client-rect';
 
-const stylesFromRect = (rect: Rect) => ({
+const stylesFromRect = (rect: Rect): CSSProperties => ({
   left: `${rect.left}px`,
   top: `${rect.top}px`,
   width: `${rect.width}px`,
@@ -31,8 +36,8 @@ const stylesFromRect = (rect: Rect) => ({
 });
 
 const ImageViewer: React.FC = () => {
-  let imageStyles;
-  let essentialRectStyles;
+  let imageStyles: CSSProperties = {};
+  let essentialRectStyles: CSSProperties = {};
   let renderedImageRect: Rect;
   let essentialRectClient: Rect;
   let selectStyles;

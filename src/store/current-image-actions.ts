@@ -1,4 +1,5 @@
 import { currentImageActions } from './current-image-slice';
+import type { AppDispatch } from './index';
 
 // need an async action to set image, because we've got no way to get
 // the image size until it's loaded into an <img> DOM element.
@@ -6,8 +7,8 @@ import { currentImageActions } from './current-image-slice';
 
 // TODO: need handle cancel case
 
-export const setCurrentImage = (filePath) => {
-  return async (dispatch) => {
+export const setCurrentImage = (filePath: string) => {
+  return async (dispatch: AppDispatch) => {
     const probeImage = new Image();
     probeImage.onload = () => {
       const imageRect = {
