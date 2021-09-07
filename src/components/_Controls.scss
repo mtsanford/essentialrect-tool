@@ -17,8 +17,8 @@
   }
 
   .happy-button .button {
-    height: 20px;
-    width: 20px;
+    height: 24px;
+    width: 24px;
     &.single {
       display:flex;
       justify-content: center;
@@ -51,8 +51,11 @@
 }
 
 
-
-.button-image {
-  width: 20px;
-  height: 20px;
+.happy-button {
+  width: 24px;
+  height: 24px;
+}
+.happy-button img {
+  width: 24px;
+  height: 24px;
 }

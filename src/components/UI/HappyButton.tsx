@@ -67,4 +67,41 @@ const HappyButton: React.FC<{
   );
 };
 
+// --------------------------------------------------------------------
+
+interface GroupButtonDescriptor {
+  token: string;
+  content: React.ReactNode;
+  depressedContent?: React.ReactNode;
+}
+
+export const HappyButtonGroup: React.FC<{
+  buttonDescriptors: GroupButtonDescriptor[];
+  selectedToken: string;
+  onChange?: (token: string) => void;
+}> = ({ buttonDescriptors, selectedToken, onChange }) => {
+  const handleClick = (id: string) => {
+    if (id !== selectedToken && onChange) {
+      onChange(id);
+    }
+  };
+
+  return (
+    <div className="happpy-button-group">
+      {buttonDescriptors.map((descriptor) => (
+        <HappyButton
+          isSlave
+          depressedChildren={descriptor.depressedContent}
+          token={descriptor.token}
+          depressed={selectedToken === descriptor.token}
+          onClick={handleClick}
+          key={descriptor.token}
+        >
+          {descriptor.content}
+        </HappyButton>
+      ))}
+    </div>
+  );
+};
+
 export default HappyButton;

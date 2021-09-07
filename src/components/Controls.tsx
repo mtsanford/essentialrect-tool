@@ -2,9 +2,12 @@ import React from 'react';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { selectPreviewColumns, uiActions } from '../store/ui-slice';
 
-import HappyButton from './UI/HappyButton';
+import HappyButton, { HappyButtonGroup } from './UI/HappyButton';
 
 import folderIcon from '../../assets/icons/folder.svg';
+import settingsIcon from '../../assets/icons/settings.svg';
+import infoIcon from '../../assets/icons/info.svg';
+import { useCallback } from 'react';
 
 const Single = () => {
   return (
@@ -25,48 +28,59 @@ const Grid = () => {
   );
 };
 
-const Controls: React.FC<{ onFileOpen: () => void }> = ({ onFileOpen }) => {
+const Controls: React.FC<{ onAction: (action: string) => void }> = ({
+  onAction,
+}) => {
   const dispatch = useAppDispatch();
   const previewColumns = useAppSelector(selectPreviewColumns);
-  const clickHandler = () => {};
 
-  const buttonClickHandler = (id: string) => {
-    const newColumns = id === 'double' ? 2 : 1;
+  const buttonDescriptors = [
+    {
+      token: 'single',
+      content: <Single />,
+    },
+    {
+      token: 'double',
+      content: <Grid />,
+    },
+  ];
+
+  const selectedToken = previewColumns > 1 ? 'double' : 'single';
+
+  const viewChangeHandler = (token: string) => {
+    const newColumns = token === 'double' ? 2 : 1;
     dispatch(uiActions.setPreviewColumns(newColumns));
   };
 
-  const openFileHandler = (id: string) => {
-    onFileOpen();
-  };
+  const onFileOpen = useCallback(() => {
+    onAction('fileOpen');
+  }, [onAction]);
 
-  const gridView = previewColumns > 1;
+  const onSettings = useCallback(() => {
+    onAction('settings');
+  }, [onAction]);
+
+  const onInfo = useCallback(() => {
+    onAction('info');
+  }, [onAction]);
 
   return (
     <div className="controls">
       <div className="controls-grid-buttons">
-        <HappyButton token="folder" onClick={openFileHandler} depressed={false}>
-          <img src={folderIcon} alt="" className="button-image" />
+        <HappyButton token="settings" onClick={onInfo} depressed={false}>
+          <img src={infoIcon} alt="" />
         </HappyButton>
-        <HappyButton
-          token="single"
-          onClick={buttonClickHandler}
-          isSlave
-          depressed={!gridView}
-        >
-          <Single />
+        <HappyButton token="folder" onClick={onFileOpen} depressed={false}>
+          <img src={folderIcon} alt="" />
         </HappyButton>
-        <HappyButton
-          token="double"
-          onClick={buttonClickHandler}
-          isSlave
-          depressed={gridView}
-        >
-          <Grid />
+        <HappyButtonGroup
+          buttonDescriptors={buttonDescriptors}
+          selectedToken={selectedToken}
+          onChange={viewChangeHandler}
+        />
+        <HappyButton token="settings" onClick={onSettings} depressed={false}>
+          <img src={settingsIcon} alt="" />
         </HappyButton>
-      </div>
-      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
-      <div className="aspect=ratio" onClick={clickHandler}>
-        HD (16:9)
       </div>
     </div>
   );

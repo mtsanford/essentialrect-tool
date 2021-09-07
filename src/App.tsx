@@ -30,14 +30,16 @@ export default function App() {
     setImageFolderState(val);
   };
 
-  const fileOpenHandler = useCallback(() => {
-    const reply = ipcRenderer.sendSync(
-      'select-file',
-      filePath ? { defaultPath: filePath } : {}
-    );
-    if (reply) {
-      const newImagePath = reply[0];
-      dispatch(setCurrentImage(newImagePath));
+  const actionHandler = useCallback((action: string) => {
+    if (action === 'fileOpen') {
+      const reply = ipcRenderer.sendSync(
+        'select-file',
+        filePath ? { defaultPath: filePath } : {}
+      );
+      if (reply) {
+        const newImagePath = reply[0];
+        dispatch(setCurrentImage(newImagePath));
+      }
     }
   }, [filePath]);
 
@@ -59,7 +61,7 @@ export default function App() {
       secondaryMinSize={240}
     >
       <div className="left-panel">
-        <Controls onFileOpen={fileOpenHandler} />
+        <Controls onAction={actionHandler} />
         <div className="essential-grid-wrapper">
           <ImageEssentialGrid />
         </div>

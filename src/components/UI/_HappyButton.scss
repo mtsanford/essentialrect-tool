@@ -6,8 +6,8 @@
 
   &.happy-button-depressed {
     background-color: #333;
-    border-top-width: 2px;
-    border-left-width: 2px;
+    border-top-width: 3px;
+    border-left-width: 3px;
     border-bottom-width: 1px;
     border-right-width: 1px;
     .happy-button-content-wrapper {
@@ -16,9 +16,15 @@
   &.happy-button-not-depressed {
     border-top-width: 1px;
     border-left-width: 1px;
-    border-bottom-width: 2px;
-    border-right-width: 2px;
+    border-bottom-width: 3px;
+    border-right-width: 3px;
   }
 
 
+}
+
+.happpy-button-group {
+  display: flex;
+  align-items: center;
+  justify-content: start;
 }
