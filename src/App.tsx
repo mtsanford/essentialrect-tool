@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ipcRenderer } from 'electron';
 
 import SplitterLayout from 'react-splitter-layout';
@@ -30,17 +30,21 @@ export default function App() {
     setImageFolderState(val);
   };
 
+  const fileOpenHandler = useCallback(() => {
+    const reply = ipcRenderer.sendSync(
+      'select-file',
+      filePath ? { defaultPath: filePath } : {}
+    );
+    if (reply) {
+      const newImagePath = reply[0];
+      dispatch(setCurrentImage(newImagePath));
+    }
+  }, [filePath]);
+
   useEffect(() => {
     const keydownListener = ({ key }) => {
       if (key === 'f') {
-        const reply = ipcRenderer.sendSync(
-          'select-file',
-          filePath ? { defaultPath: filePath } : {}
-        );
-        if (reply) {
-          const newImagePath = reply[0];
-          dispatch(setCurrentImage(newImagePath));
-        }
+        fileOpenHandler();
       }
     };
     window.addEventListener('keydown', keydownListener);
@@ -55,7 +59,7 @@ export default function App() {
       secondaryMinSize={240}
     >
       <div className="left-panel">
-        <Controls />
+        <Controls onFileOpen={fileOpenHandler} />
         <div className="essential-grid-wrapper">
           <ImageEssentialGrid />
         </div>

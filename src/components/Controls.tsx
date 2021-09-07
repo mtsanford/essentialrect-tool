@@ -25,7 +25,7 @@ const Grid = () => {
   );
 };
 
-const Controls: React.FC = () => {
+const Controls: React.FC<{ onFileOpen: () => void }> = ({ onFileOpen }) => {
   const dispatch = useAppDispatch();
   const previewColumns = useAppSelector(selectPreviewColumns);
   const clickHandler = () => {};
@@ -36,7 +36,7 @@ const Controls: React.FC = () => {
   };
 
   const openFileHandler = (id: string) => {
-    console.log('openFile');
+    onFileOpen();
   };
 
   const gridView = previewColumns > 1;
