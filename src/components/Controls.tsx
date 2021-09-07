@@ -35,23 +35,22 @@ const Controls: React.FC = () => {
     dispatch(uiActions.setPreviewColumns(newColumns));
   };
 
-  const gridView = previewColumns > 1;
+  const openFileHandler = (id: string) => {
+    console.log('openFile');
+  };
 
-  console.log(folderIcon);
+  const gridView = previewColumns > 1;
 
   return (
     <div className="controls">
       <div className="controls-grid-buttons">
-      <HappyButton
-          token="folder"
-          onClick={buttonClickHandler}
-          depressed={false}
-        >
+        <HappyButton token="folder" onClick={openFileHandler} depressed={false}>
           <img src={folderIcon} alt="" className="button-image" />
         </HappyButton>
         <HappyButton
           token="single"
           onClick={buttonClickHandler}
+          isSlave
           depressed={!gridView}
         >
           <Single />
@@ -59,6 +58,7 @@ const Controls: React.FC = () => {
         <HappyButton
           token="double"
           onClick={buttonClickHandler}
+          isSlave
           depressed={gridView}
         >
           <Grid />

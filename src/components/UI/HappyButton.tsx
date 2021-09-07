@@ -1,20 +1,68 @@
-import React, { useEffect } from 'react';
+import React, { useState, MouseEventHandler } from 'react';
 
 const HappyButton: React.FC<{
   token: string;
-  depressed: boolean;
-  onClick: (id: string) => void;
-}> = ({ children, token, depressed, onClick }) => {
+  isSlave?: boolean; // depressed state managed by parent component
+  depressed?: boolean;
+  depressedChildren?: React.ReactNode;
+  onClick?: (id: string) => void;
+}> = ({
+  children,
+  token,
+  isSlave = false,
+  depressed: depressedProp,
+  depressedChildren,
+  onClick,
+}) => {
+  const [depressedState, setDepressedState] = useState<boolean>(false);
+
+  // If we're a slave, we'll let the parent component manage the depressed state.
+  // Otherwise, we'll manage it ourselves
+  const depressed = isSlave ? depressedProp : depressedState;
+
   const depressedClass = depressed
     ? 'happy-button-depressed'
     : 'happy-button-not-depressed';
   const buttonClasses = `happy-button ${depressedClass}`;
 
-  const clickHandler = () => onClick(token);
+  const buttonContent: React.ReactNode =
+    depressed && depressedChildren ? depressedChildren : children;
+
+  const mouseDownHandler: MouseEventHandler<HTMLDivElement> = (event) => {
+    event.preventDefault();
+    if (isSlave && onClick) {
+      onClick(token);
+    }
+    if (!isSlave) {
+      setDepressedState(true);
+    }
+  };
+
+  const mouseUpHandler: MouseEventHandler<HTMLDivElement> = (event) => {
+    event.preventDefault();
+    if (!isSlave && depressed) {
+      setDepressedState(false);
+      if (onClick) {
+        onClick(token);
+      }
+    }
+  };
+
+  const mouseLeaveHandler: MouseEventHandler<HTMLDivElement> = (event) => {
+    event.preventDefault();
+    if (!isSlave) {
+      setDepressedState(false);
+    }
+  };
 
   return (
-    <div className={buttonClasses} onClick={clickHandler}>
-      <div className="happy-button-content-wrapper">{children}</div>
+    <div
+      className={buttonClasses}
+      onMouseDown={mouseDownHandler}
+      onMouseUp={mouseUpHandler}
+      onMouseLeave={mouseLeaveHandler}
+    >
+      <div className="happy-button-content-wrapper">{buttonContent}</div>
     </div>
   );
 };

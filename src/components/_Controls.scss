@@ -19,9 +19,6 @@
   .happy-button .button {
     height: 20px;
     width: 20px;
-    .square {
-      background: white;
-    }
     &.single {
       display:flex;
       justify-content: center;
@@ -45,6 +42,14 @@
   }
 
 }
+
+.happy-button.happy-button-depressed .square {
+  background: white;
+}
+.happy-button.happy-button-not-depressed .square {
+  background: #AAA;
+}
+
 
 
 .button-image {
