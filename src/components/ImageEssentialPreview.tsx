@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 
 import { fitRect } from '../lib/fit-essential-rect';
 import useClientRect from '../hooks/use-client-rect';
@@ -58,7 +58,6 @@ const ImageEssentialPreview: React.FC<{
   let borderSize;
   let sizeMultiplier;
 
-  const imageContainerRef = useRef<HTMLDivElement>();
   const [ref, clientRect] = useClientRect();
   const { aspectRatio, name: aspectName, ratioText } = aspectRatioInfo;
   const landscape = aspectRatio >= 1;
@@ -138,7 +137,6 @@ const ImageEssentialPreview: React.FC<{
           <div
             className="image-essential-image-container"
             style={containerStyles}
-            ref={imageContainerRef}
           >
             {renderImage && (
               <img
