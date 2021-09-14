@@ -117,10 +117,27 @@ const ImageViewer: React.FC = () => {
     }
   };
 
+  let monitorText;
+
+  if (essentialRect) {
+    const er = {
+      left: Math.floor(essentialRect.left),
+      top: Math.floor(essentialRect.top),
+      width: Math.floor(essentialRect.width),
+      height: Math.floor(essentialRect.height),
+    };
+    monitorText = JSON.stringify(er);
+  }
+
   return (
     <div className="image-viewer" ref={imageViewerRef}>
       {ready && (
         <>
+          {essentialRect && (
+            <div className="image-viewer-essential-rect-monitor">
+              {monitorText}
+            </div>
+          )}
           {dragging && (
             <div className="image-viewer-select" style={selectStyles} />
           )}
