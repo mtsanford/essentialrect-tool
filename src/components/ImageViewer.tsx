@@ -1,11 +1,6 @@
-import React, {
-  MouseEvent,
-  MouseEventHandler,
-  useState,
-  CSSProperties,
-} from 'react';
+import React, { CSSProperties } from 'react';
 
-import ReactCrop from 'react-image-crop';
+import ReactCrop, { Crop } from 'react-image-crop';
 
 import { pathToUrl } from '../lib/util';
 import {
@@ -37,19 +32,15 @@ const stylesFromRect = (rect: Rect): CSSProperties => ({
   height: `${rect.height}px`,
 });
 
-const ImageViewer: React.FC = () => {
-  const [crop, setCrop] = useState({ aspect: 16 / 9, width: 30 });
+const cropImageStyles: CSSProperties = { width: '100%' };
 
-  let imageStyles: CSSProperties = {};
-  let essentialRectStyles: CSSProperties = {};
+const ImageViewer: React.FC = () => {
+  let crop: Partial<Crop> = { width: 10, height: 10 };
+  let cropWrapperStyles: CSSProperties = {};
   let renderedImageRect: Rect;
   let essentialRectClient: Rect;
-  let selectStyles;
 
   const dispatch = useAppDispatch();
-  const [dragging, setDragging] = useState<boolean>(false);
-  const [startMousePos, setStartMousePos] = useState<Point>(emptyPoint);
-  const [selectRect, setSelectRect] = useState<Rect>(emptyRect);
   const [imageViewerRef, clientRect] = useClientRect();
   const { filePath, isValid, imageRect, essentialRect } = useAppSelector(
     selectCurrentImage
@@ -62,50 +53,47 @@ const ImageViewer: React.FC = () => {
 
   if (ready && clientRect && imageRect && essentialRect) {
     renderedImageRect = fitRect(imageRect, imageRect, clientRect);
-    imageStyles = stylesFromRect(renderedImageRect);
+    const imageClientRect = stylesFromRect(renderedImageRect);
+    cropWrapperStyles = {
+      ...imageClientRect,
+      position: 'absolute',
+    };
+
     essentialRectClient = imageToClientRect(
       imageRect,
       renderedImageRect,
       essentialRect
     );
 
-    essentialRectStyles = stylesFromRect(essentialRectClient);
-
-    if (dragging) selectStyles = stylesFromRect(selectRect);
+    crop = {
+      x: essentialRectClient.left - renderedImageRect.left,
+      y: essentialRectClient.top - renderedImageRect.top,
+      width: essentialRectClient.width,
+      height: essentialRectClient.height,
+      unit: 'px',
+    };
   }
 
-  const mouseDownHandler: MouseEventHandler<HTMLDivElement> = (
-    event: MouseEvent
-  ) => {
-    const mousePos = {
-      x: event.nativeEvent.offsetX,
-      y: event.nativeEvent.offsetY,
+  // let monitorText;
+
+  // if (essentialRect) {
+  //   const er = {
+  //     left: Math.floor(essentialRect.left),
+  //     top: Math.floor(essentialRect.top),
+  //     width: Math.floor(essentialRect.width),
+  //     height: Math.floor(essentialRect.height),
+  //   };
+  //   monitorText = JSON.stringify(er);
+  // }
+
+  const onCropChange = (newCrop: Crop) => {
+    const selectRect: Rect = {
+      left: newCrop.x + renderedImageRect.left,
+      top: newCrop.y + renderedImageRect.top,
+      width: newCrop.width,
+      height: newCrop.height,
     };
-    const newSelectRect = rectFromPoints(mousePos, mousePos);
 
-    setDragging(true);
-    setStartMousePos(mousePos);
-    setSelectRect(newSelectRect);
-  };
-
-  const mouseMoveHandler: MouseEventHandler<HTMLDivElement> = (
-    event: MouseEvent
-  ) => {
-    if (!dragging) {
-      return;
-    }
-
-    const mousePos = {
-      x: event.nativeEvent.offsetX,
-      y: event.nativeEvent.offsetY,
-    };
-    const newSelectRect = rectFromPoints(startMousePos, mousePos);
-
-    setDragging(true);
-    setSelectRect(newSelectRect);
-  };
-
-  const mouseUpHandler: MouseEventHandler<HTMLDivElement> = () => {
     if (!imageRect) return;
 
     const newEssentialRect = clientToImageRect(
@@ -115,54 +103,28 @@ const ImageViewer: React.FC = () => {
     );
     const clipped = rectClip(newEssentialRect, imageRect);
 
-    setDragging(false);
     if (!rectEmpty(clipped)) {
       dispatch(currentImageActions.setEssentialRect(clipped));
     }
   };
 
-  let monitorText;
-
-  if (essentialRect) {
-    const er = {
-      left: Math.floor(essentialRect.left),
-      top: Math.floor(essentialRect.top),
-      width: Math.floor(essentialRect.width),
-      height: Math.floor(essentialRect.height),
-    };
-    monitorText = JSON.stringify(er);
-  }
-
-  const onCropChange = (newCrop) => {
-    console.log('crop change', newCrop);
-    setCrop(newCrop);
-  };
-
   return (
     <div className="image-viewer" ref={imageViewerRef}>
-      <ReactCrop src={imageUrl} crop={crop} onChange={onCropChange} />
+      <div style={cropWrapperStyles}>
+        <ReactCrop
+          src={imageUrl}
+          crop={crop}
+          onChange={onCropChange}
+          imageStyle={cropImageStyles}
+        />
+      </div>
       {ready && (
         <>
-          {/* <ReactCrop src={imageUrl} crop={crop} onChange={onCropChange} /> */}
           {/* {essentialRect && (
             <div className="image-viewer-essential-rect-monitor">
               {monitorText}
             </div>
           )}
-          {dragging && (
-            <div className="image-viewer-select" style={selectStyles} />
-          )}
-          <div
-            className="image-viewer-essential-rect"
-            style={essentialRectStyles}
-          />
-          <div
-            className="image-viewer-overlay"
-            role="presentation"
-            onMouseDown={mouseDownHandler}
-            onMouseMove={mouseMoveHandler}
-            onMouseUp={mouseUpHandler}
-          />
           <img
             className="image-viewer-image"
             src={imageUrl}
