@@ -5,6 +5,8 @@ import React, {
   CSSProperties,
 } from 'react';
 
+import ReactCrop from 'react-image-crop';
+
 import { pathToUrl } from '../lib/util';
 import {
   Rect,
@@ -36,6 +38,8 @@ const stylesFromRect = (rect: Rect): CSSProperties => ({
 });
 
 const ImageViewer: React.FC = () => {
+  const [crop, setCrop] = useState({ aspect: 16 / 9, width: 30 });
+
   let imageStyles: CSSProperties = {};
   let essentialRectStyles: CSSProperties = {};
   let renderedImageRect: Rect;
@@ -129,11 +133,18 @@ const ImageViewer: React.FC = () => {
     monitorText = JSON.stringify(er);
   }
 
+  const onCropChange = (newCrop) => {
+    console.log('crop change', newCrop);
+    setCrop(newCrop);
+  };
+
   return (
     <div className="image-viewer" ref={imageViewerRef}>
+      <ReactCrop src={imageUrl} crop={crop} onChange={onCropChange} />
       {ready && (
         <>
-          {essentialRect && (
+          {/* <ReactCrop src={imageUrl} crop={crop} onChange={onCropChange} /> */}
+          {/* {essentialRect && (
             <div className="image-viewer-essential-rect-monitor">
               {monitorText}
             </div>
@@ -157,7 +168,7 @@ const ImageViewer: React.FC = () => {
             src={imageUrl}
             alt=""
             style={imageStyles}
-          />
+          /> */}
         </>
       )}
     </div>

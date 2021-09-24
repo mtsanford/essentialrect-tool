@@ -30,18 +30,21 @@ export default function App() {
     setImageFolderState(val);
   };
 
-  const actionHandler = useCallback((action: string) => {
-    if (action === 'fileOpen') {
-      const reply = ipcRenderer.sendSync(
-        'select-file',
-        filePath ? { defaultPath: filePath } : {}
-      );
-      if (reply) {
-        const newImagePath = reply[0];
-        dispatch(setCurrentImage(newImagePath));
+  const actionHandler = useCallback(
+    (action: string) => {
+      if (action === 'fileOpen') {
+        const reply = ipcRenderer.sendSync(
+          'select-file',
+          filePath ? { defaultPath: filePath } : {}
+        );
+        if (reply) {
+          const newImagePath = reply[0];
+          dispatch(setCurrentImage(newImagePath));
+        }
       }
-    }
-  }, [filePath]);
+    },
+    [filePath]
+  );
 
   useEffect(() => {
     const keydownListener = ({ key }) => {
@@ -58,7 +61,7 @@ export default function App() {
     <SplitterLayout
       customClassName="imgjoy-splitter-layout"
       primaryMinSize={240}
-      secondaryMinSize={240}
+      secondaryMinSize={350}
     >
       <div className="left-panel">
         <Controls onAction={actionHandler} />

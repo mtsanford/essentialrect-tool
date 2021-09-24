@@ -4,6 +4,7 @@
  */
 
 @import '~react-splitter-layout/lib/index.css';
+@import '~react-image-crop/dist/ReactCrop.css';
 
 html,
 body,
@@ -71,7 +72,6 @@ a:hover {
   text-decoration: none;
 }
 
-
 /* ------------------ */
 
 .left-panel {
@@ -92,7 +92,6 @@ a:hover {
 }
 
 /* ------------------ */
-
 
 .randomimages-no-images {
   display: flex;
@@ -153,7 +152,6 @@ a:hover {
 
 /* -------- */
 
-
 /* custom scrollbar */
 ::-webkit-scrollbar {
   width: 20px;
@@ -174,10 +172,4 @@ a:hover {
   background-color: #a8bbbf;
 }
 
-
-
 /* -------- */
-
-
-
-
