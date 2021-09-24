@@ -3,7 +3,7 @@ import { ipcRenderer } from 'electron';
 
 import SplitterLayout from 'react-splitter-layout';
 
-import ImageViewer from './components/ImageViewer';
+import ImageRectTool from './components/ImageRectTool';
 import ImageEssentialGrid from './components/ImageEssentialGrid';
 import Controls from './components/Controls';
 
@@ -69,7 +69,7 @@ export default function App() {
           <ImageEssentialGrid />
         </div>
       </div>
-      <ImageViewer />
+      <ImageRectTool />
     </SplitterLayout>
   );
 }

@@ -37,7 +37,7 @@ const cropImageStyles: CSSProperties = { width: '100%' };
 const ImageViewer: React.FC = () => {
   let crop: Partial<Crop> = { width: 10, height: 10 };
   let cropWrapperStyles: CSSProperties = {};
-  let renderedImageRect: Rect;
+  let cropWrapperRect: Rect = emptyRect;
   let essentialRectClient: Rect;
 
   const dispatch = useAppDispatch();
@@ -52,44 +52,32 @@ const ImageViewer: React.FC = () => {
   const ready = isValid && !rectEmpty(clientRect);
 
   if (ready && clientRect && imageRect && essentialRect) {
-    renderedImageRect = fitRect(imageRect, imageRect, clientRect);
-    const imageClientRect = stylesFromRect(renderedImageRect);
+    cropWrapperRect = fitRect(imageRect, imageRect, clientRect);
+    cropWrapperStyles = stylesFromRect(cropWrapperRect);
     cropWrapperStyles = {
-      ...imageClientRect,
+      ...cropWrapperStyles,
       position: 'absolute',
     };
 
     essentialRectClient = imageToClientRect(
       imageRect,
-      renderedImageRect,
+      cropWrapperRect,
       essentialRect
     );
 
     crop = {
-      x: essentialRectClient.left - renderedImageRect.left,
-      y: essentialRectClient.top - renderedImageRect.top,
+      x: essentialRectClient.left - cropWrapperRect.left,
+      y: essentialRectClient.top - cropWrapperRect.top,
       width: essentialRectClient.width,
       height: essentialRectClient.height,
       unit: 'px',
     };
   }
 
-  // let monitorText;
-
-  // if (essentialRect) {
-  //   const er = {
-  //     left: Math.floor(essentialRect.left),
-  //     top: Math.floor(essentialRect.top),
-  //     width: Math.floor(essentialRect.width),
-  //     height: Math.floor(essentialRect.height),
-  //   };
-  //   monitorText = JSON.stringify(er);
-  // }
-
   const onCropChange = (newCrop: Crop) => {
     const selectRect: Rect = {
-      left: newCrop.x + renderedImageRect.left,
-      top: newCrop.y + renderedImageRect.top,
+      left: newCrop.x + cropWrapperRect.left,
+      top: newCrop.y + cropWrapperRect.top,
       width: newCrop.width,
       height: newCrop.height,
     };
@@ -98,7 +86,7 @@ const ImageViewer: React.FC = () => {
 
     const newEssentialRect = clientToImageRect(
       imageRect,
-      renderedImageRect,
+      cropWrapperRect,
       selectRect
     );
     const clipped = rectClip(newEssentialRect, imageRect);
@@ -118,21 +106,6 @@ const ImageViewer: React.FC = () => {
           imageStyle={cropImageStyles}
         />
       </div>
-      {ready && (
-        <>
-          {/* {essentialRect && (
-            <div className="image-viewer-essential-rect-monitor">
-              {monitorText}
-            </div>
-          )}
-          <img
-            className="image-viewer-image"
-            src={imageUrl}
-            alt=""
-            style={imageStyles}
-          /> */}
-        </>
-      )}
     </div>
   );
 };
