@@ -37,6 +37,7 @@ const cropImageStyles: CSSProperties = { width: '100%' };
 const ImageViewer: React.FC = () => {
   let crop: Partial<Crop> = { width: 10, height: 10 };
   let cropWrapperStyles: CSSProperties = {};
+  let cropStyles: CSSProperties = {};
   let cropWrapperRect: Rect = emptyRect;
   let essentialRectClient: Rect;
 
@@ -57,6 +58,10 @@ const ImageViewer: React.FC = () => {
     cropWrapperStyles = {
       ...cropWrapperStyles,
       position: 'absolute',
+    };
+
+    cropStyles = {
+      height: `${cropWrapperRect.height}px`,
     };
 
     essentialRectClient = imageToClientRect(
@@ -97,14 +102,17 @@ const ImageViewer: React.FC = () => {
   };
 
   return (
-    <div className="image-viewer" ref={imageViewerRef}>
-      <div style={cropWrapperStyles}>
-        <ReactCrop
-          src={imageUrl}
-          crop={crop}
-          onChange={onCropChange}
-          imageStyle={cropImageStyles}
-        />
+    <div className="image-viewer">
+      <div className="image-viewer-inner" ref={imageViewerRef}>
+        <div style={cropWrapperStyles}>
+          <ReactCrop
+            src={imageUrl}
+            crop={crop}
+            onChange={onCropChange}
+            style={cropStyles}
+            imageStyle={cropImageStyles}
+          />
+        </div>
       </div>
     </div>
   );
