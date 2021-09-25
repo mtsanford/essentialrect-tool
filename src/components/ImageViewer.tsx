@@ -3,15 +3,7 @@ import React, { CSSProperties } from 'react';
 import ReactCrop, { Crop } from 'react-image-crop';
 
 import { pathToUrl } from '../lib/util';
-import {
-  Rect,
-  Point,
-  rectFromPoints,
-  rectEmpty,
-  rectClip,
-  emptyRect,
-  emptyPoint,
-} from '../model/Rect';
+import { Rect, rectEmpty, rectClip, emptyRect } from '../model/Rect';
 import {
   fitRect,
   clientToImageRect,

@@ -137,6 +137,12 @@ a:hover {
 }
 
 
+.image-viewer-info {
+  flex-grow: 0;
+  border-top: 1px solid black;
+  padding: 0.2em;
+}
+
 .image-viewer-controls-monitor {
   background-color: white;
   color: black;
@@ -144,6 +150,7 @@ a:hover {
   display: inline-block;
   padding: 3px;
   border: 1px solid black;
+  cursor: copy;
 }
 
 

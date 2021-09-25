@@ -22,9 +22,6 @@ const ImageViewerControls: React.FC = () => {
 
   return (
     <div className="image-viewer-controls">
-      {monitorText && (
-        <div className="image-viewer-controls-monitor">{monitorText}</div>
-      )}
     </div>
   );
 };
