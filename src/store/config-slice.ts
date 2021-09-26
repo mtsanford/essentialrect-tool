@@ -51,6 +51,20 @@ const defaultConfigState: ConfigState = {
       id: '(9:19.5)',
       enabled: true,
     },
+    {
+      name: 'Social Media Portrait',
+      ratioText: '(4:5)',
+      aspectRatio: 4 / 5,
+      id: '(4:5)',
+      enabled: true,
+    },
+    {
+      name: 'Social Media',
+      ratioText: '(1.91:1)',
+      aspectRatio: 1.91,
+      id: '(1.91:1)',
+      enabled: true,
+    },
   ],
 };
 

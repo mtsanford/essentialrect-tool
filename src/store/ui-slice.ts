@@ -12,12 +12,14 @@ export interface UiState {
   notification?: Notification;
   previewColumns: number;
   constrain: boolean;
+  lowerConstraintID?: string;
+  upperConstraintID?: string;
 }
 
 const initialState = persistentStorage.get('uiState', {
   previewColumns: 2,
   constrain: false,
-}) as UiState;
+});
 
 const uiSlice = createSlice({
   name: 'ui',
@@ -32,6 +34,12 @@ const uiSlice = createSlice({
     setConstrain(state, action: PayloadAction<boolean>) {
       state.constrain = action.payload;
     },
+    setLowerConstraint(state, action: PayloadAction<string>) {
+      state.lowerConstraintID = action.payload;
+    },
+    setUpperConstraint(state, action: PayloadAction<string>) {
+      state.upperConstraintID = action.payload;
+    },
   },
 });
 
@@ -42,5 +50,7 @@ export const uiActions = uiSlice.actions;
 export const selectPreviewColumns = (state: RootState) =>
   state.ui.previewColumns;
 export const selectConstrain = (state: RootState) => state.ui.constrain;
+export const selectLowerConstraintID = (state: RootState) => state.ui.lowerConstraintID;
+export const selectUpperConstraintID = (state: RootState) => state.ui.upperConstraintID;
 
 export default uiSlice;
