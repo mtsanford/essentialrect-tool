@@ -56,6 +56,7 @@ button:hover {
   transform: scale(1.05);
 }
 
+
 li {
   list-style: none;
 }
@@ -131,16 +132,17 @@ a:hover {
   justify-items: flex-start;
   width: 100%;
   color: white;
+  background-color: black;;
   flex-grow: 0;
   align-items: center;
-  border-bottom: 1px black solid;
+  padding: 0.6em;
 }
 
 
 .image-viewer-info {
   flex-grow: 0;
-  border-top: 1px solid black;
   padding: 0.2em;
+  background-color: black;
 }
 
 .image-viewer-controls-monitor {

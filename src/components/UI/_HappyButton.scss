@@ -31,3 +31,12 @@
   margin-left: 12px;
   margin-right: 12px;
 }
+
+.happy-button-depressed .svg-toggle-button, .svg-button {
+  filter: invert(94%) sepia(82%) saturate(0%) hue-rotate(196deg) brightness(108%) contrast(101%);
+}
+
+.happy-button-not-depressed .svg-toggle-button {
+  filter: invert(65%) sepia(0%) saturate(114%) hue-rotate(135deg) brightness(104%) contrast(96%);
+}
+

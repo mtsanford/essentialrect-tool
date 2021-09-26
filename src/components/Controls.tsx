@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { selectPreviewColumns, uiActions } from '../store/ui-slice';
 
@@ -7,7 +7,6 @@ import HappyButton, { HappyButtonGroup } from './UI/HappyButton';
 import folderIcon from '../../assets/icons/folder.svg';
 import settingsIcon from '../../assets/icons/settings.svg';
 import infoIcon from '../../assets/icons/info.svg';
-import { useCallback } from 'react';
 
 const Single = () => {
   return (
