@@ -17,8 +17,8 @@ import {
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import {
   selectConstrain,
-  selectLowerConstraintID,
-  selectUpperConstraintID,
+  selectLowerConstraint,
+  selectUpperConstraint,
   uiActions,
 } from '../store/ui-slice';
 import { selectAspectRatios } from '../store/config-slice';
@@ -47,20 +47,38 @@ const ImageViewer: React.FC = () => {
     selectCurrentImage
   );
   const constrain = useAppSelector(selectConstrain);
-  const aspectRatios = useAppSelector(selectAspectRatios);
-  let lowerConstraintID = useAppSelector(selectLowerConstraintID);
-  let upperConstraintID = useAppSelector(selectUpperConstraintID);
+  const lowerConstraint = useAppSelector(selectLowerConstraint);
+  const upperConstraint = useAppSelector(selectUpperConstraint);
 
   const imageUrl = pathToUrl(filePath);
 
-  useEffect(() => {}, [constrain, lowerConstraintID, upperConstraintID]);
-
   useEffect(() => {
     // presuming imageRect changes iff we get a new image
-    if (!essentialRect && imageRect) {
-      dispatch(currentImageActions.setEssentialRect(imageRect));
+    if (imageRect) {
+      console.log('lowerConstraint', lowerConstraint);
+      console.log('upperConstraint', upperConstraint);
+      console.log('imageRect', imageRect);
+      const maxWidth = Math.min(
+        imageRect.width,
+        imageRect.height * lowerConstraint
+      );
+      const maxHeight = Math.min(
+        imageRect.height,
+        imageRect.width / upperConstraint
+      );
+
+      const newEssentialRect = {
+        left: (imageRect.width - maxWidth) / 2,
+        top: (imageRect.height - maxHeight) / 2,
+        width: maxWidth,
+        height: maxHeight,
+      }
+
+      console.log('newEssentialRect' ,newEssentialRect);
+
+      dispatch(currentImageActions.setEssentialRect(newEssentialRect));
     }
-  }, [imageRect, essentialRect, dispatch]);
+  }, [imageRect, upperConstraint, lowerConstraint, dispatch]);
 
   // we can determine where image should be placed until we have clientrect
   // and an image rect.  We can't draw the crop until we have an essentialRect.

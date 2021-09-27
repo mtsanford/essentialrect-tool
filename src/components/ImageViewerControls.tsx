@@ -25,6 +25,13 @@ const aspectRatioSelectValues = (aspectRatios, predicate) => {
   );
 };
 
+const aspectRatioFromID = (
+  aspectRatios: AspectRatio[],
+  id?: string
+): number | undefined => {
+  return aspectRatios.find((ar) => ar.id === id)?.aspectRatio;
+};
+
 const ImageViewerControls: React.FC = () => {
   const dispatch = useAppDispatch();
   const constrain = useAppSelector(selectConstrain);
@@ -54,19 +61,19 @@ const ImageViewerControls: React.FC = () => {
   }, [constrain, dispatch]);
 
   const lowerConstraintChanged = (event) => {
-    dispatch(
-      uiActions.setLowerConstraint(
-        event.target.value === 'none' ? undefined : event.target.value
-      )
-    );
+    const id = event.target.value === 'none' ? undefined : event.target.value;
+    const aspectRatio = aspectRatioFromID(aspectRatios, id);
+
+    event.preventDefault();
+    dispatch(uiActions.setLowerConstraint({ id, aspectRatio }));
   };
 
   const upperConstraintChanged = (event) => {
-    dispatch(
-      uiActions.setUpperConstraint(
-        event.target.value === 'none' ? undefined : event.target.value
-      )
-    );
+    const id = event.target.value === 'none' ? undefined : event.target.value;
+    const aspectRatio = aspectRatioFromID(aspectRatios, id);
+
+    event.preventDefault();
+    dispatch(uiActions.setUpperConstraint({ id, aspectRatio }));
   };
 
   return (
