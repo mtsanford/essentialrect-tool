@@ -32,7 +32,8 @@ const aspectRatioFromID = (
   return aspectRatios.find((ar) => ar.id === id)?.aspectRatio;
 };
 
-const ImageViewerControls: React.FC = () => {
+const ImageViewerControls = (props: any) => {
+  const { onReset } = props;
   const dispatch = useAppDispatch();
   const constrain = useAppSelector(selectConstrain);
   const aspectRatios = useAppSelector(selectAspectRatios);
@@ -51,10 +52,6 @@ const ImageViewerControls: React.FC = () => {
     aspectRatios,
     (ar) => ar.aspectRatio > 1
   );
-
-  const resetClicked = useCallback(() => {
-    console.log('reset clicked', aspectRatios);
-  }, [dispatch]);
 
   const constrainClicked = useCallback(() => {
     dispatch(uiActions.setConstrain(!constrain));
@@ -78,7 +75,7 @@ const ImageViewerControls: React.FC = () => {
 
   return (
     <div className="image-viewer-controls">
-      <HappyButton onClick={resetClicked} token="reset">
+      <HappyButton onClick={onReset} token="reset">
         <img src={maximizeIcon} alt="" className="svg-button" title="reset" />
       </HappyButton>
 

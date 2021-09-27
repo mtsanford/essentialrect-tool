@@ -9,19 +9,6 @@ import {
   clientToImageRect,
   imageToClientRect,
 } from '../lib/fit-essential-rect';
-import {
-  currentImageActions,
-  selectCurrentImage,
-} from '../store/current-image-slice';
-
-import { useAppSelector, useAppDispatch } from '../store/hooks';
-import {
-  selectConstrain,
-  selectLowerConstraint,
-  selectUpperConstraint,
-  uiActions,
-} from '../store/ui-slice';
-import { selectAspectRatios } from '../store/config-slice';
 
 import useClientRect from '../hooks/use-client-rect';
 
@@ -34,51 +21,25 @@ const stylesFromRect = (rect: Rect): CSSProperties => ({
 
 const cropImageStyles: CSSProperties = { width: '100%' };
 
-const ImageViewer: React.FC = () => {
+const ImageViewer = (props: any) => {
+  const {
+    filePath,
+    imageRect,
+    essentialRect,
+    maxWidth,
+    maxHeight,
+    setEssentialRect,
+  } = props;
+
   let crop: Partial<Crop> = { width: 10, height: 10 };
   let cropWrapperStyles: CSSProperties = {};
   let cropStyles: CSSProperties = {};
   let cropWrapperRect: Rect = emptyRect;
   let essentialRectClient: Rect;
 
-  const dispatch = useAppDispatch();
   const [imageViewerRef, clientRect] = useClientRect();
-  const { filePath, imageRect, essentialRect } = useAppSelector(
-    selectCurrentImage
-  );
-  const constrain = useAppSelector(selectConstrain);
-  const lowerConstraint = useAppSelector(selectLowerConstraint);
-  const upperConstraint = useAppSelector(selectUpperConstraint);
 
   const imageUrl = pathToUrl(filePath);
-
-  useEffect(() => {
-    // presuming imageRect changes iff we get a new image
-    if (imageRect) {
-      console.log('lowerConstraint', lowerConstraint);
-      console.log('upperConstraint', upperConstraint);
-      console.log('imageRect', imageRect);
-      const maxWidth = Math.min(
-        imageRect.width,
-        imageRect.height * lowerConstraint
-      );
-      const maxHeight = Math.min(
-        imageRect.height,
-        imageRect.width / upperConstraint
-      );
-
-      const newEssentialRect = {
-        left: (imageRect.width - maxWidth) / 2,
-        top: (imageRect.height - maxHeight) / 2,
-        width: maxWidth,
-        height: maxHeight,
-      }
-
-      console.log('newEssentialRect' ,newEssentialRect);
-
-      dispatch(currentImageActions.setEssentialRect(newEssentialRect));
-    }
-  }, [imageRect, upperConstraint, lowerConstraint, dispatch]);
 
   // we can determine where image should be placed until we have clientrect
   // and an image rect.  We can't draw the crop until we have an essentialRect.
@@ -132,7 +93,7 @@ const ImageViewer: React.FC = () => {
     const clipped = rectClip(newEssentialRect, imageRect);
 
     if (!rectEmpty(clipped)) {
-      dispatch(currentImageActions.setEssentialRect(clipped));
+      setEssentialRect(clipped);
     }
   };
 
