@@ -36,6 +36,8 @@ const ImageViewer = (props: any) => {
   let cropStyles: CSSProperties = {};
   let cropWrapperRect: Rect = emptyRect;
   let essentialRectClient: Rect;
+  let maxCropWidth;
+  let maxCropHeight;
 
   const [imageViewerRef, clientRect] = useClientRect();
 
@@ -65,6 +67,17 @@ const ImageViewer = (props: any) => {
       cropWrapperRect,
       essentialRect
     );
+
+    const maxRect = {
+      left: 0,
+      top: 0,
+      width: maxWidth,
+      height: maxHeight,
+    };
+
+    const maxCropRect = imageToClientRect(imageRect, cropWrapperRect, maxRect);
+    maxCropWidth = maxCropRect.width;
+    maxCropHeight = maxCropRect.height;
 
     crop = {
       x: essentialRectClient.left - cropWrapperRect.left,
@@ -109,6 +122,10 @@ const ImageViewer = (props: any) => {
                 onChange={onCropChange}
                 style={cropStyles}
                 imageStyle={cropImageStyles}
+                minWidth={32}
+                minHeight={32}
+                maxWidth={maxCropWidth}
+                maxHeight={maxCropHeight}
               />
             )}
           </div>

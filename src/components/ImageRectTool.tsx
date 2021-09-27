@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 
 import ImageViewer from './ImageViewer';
 import ImageViewerControls from './ImageViewerControls';
@@ -24,40 +24,37 @@ const ImageRectTool = () => {
     selectCurrentImage
   );
 
-  const maxWidth = 0;
-  const maxHeight = 0;
+  let maxWidth = 0;
+  let maxHeight = 0;
 
-  const resetHandler = () => {
-    console.log('reset clicked');
-  };
+  if (imageRect) {
+    maxWidth = constrain
+      ? Math.min(imageRect.width, imageRect.height * lowerConstraint)
+      : imageRect.width;
+    maxHeight = constrain
+      ? Math.min(imageRect.height, imageRect.width / upperConstraint)
+      : imageRect.height;
+  }
 
-  useEffect(() => {
-    // presuming imageRect changes iff we get a new image
+  const resetEssentialRect = useCallback(() => {
     if (imageRect) {
-      console.log('lowerConstraint', lowerConstraint);
-      console.log('upperConstraint', upperConstraint);
-      console.log('imageRect', imageRect);
-      const maxWidth = Math.min(
-        imageRect.width,
-        imageRect.height * lowerConstraint
-      );
-      const maxHeight = Math.min(
-        imageRect.height,
-        imageRect.width / upperConstraint
-      );
-
       const newEssentialRect = {
         left: (imageRect.width - maxWidth) / 2,
         top: (imageRect.height - maxHeight) / 2,
         width: maxWidth,
         height: maxHeight,
       };
-
-      console.log('newEssentialRect', newEssentialRect);
-
       dispatch(currentImageActions.setEssentialRect(newEssentialRect));
     }
-  }, [imageRect, upperConstraint, lowerConstraint, dispatch]);
+  }, [imageRect, maxWidth, maxHeight, dispatch]);
+
+  const resetHandler = useCallback(() => {
+    resetEssentialRect();
+  }, [resetEssentialRect]);
+
+  useEffect(() => {
+    resetEssentialRect();
+  }, [imageRect, maxWidth, maxHeight, resetEssentialRect]);
 
   const setEssentialRect = (newEssentialRect) => {
     dispatch(currentImageActions.setEssentialRect(newEssentialRect));
