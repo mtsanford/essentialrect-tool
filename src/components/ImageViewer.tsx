@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useEffect } from 'react';
 
 import ReactCrop, { Crop } from 'react-image-crop';
 
@@ -14,7 +14,15 @@ import {
   selectCurrentImage,
 } from '../store/current-image-slice';
 
-import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { useAppSelector, useAppDispatch } from '../store/hooks';
+import {
+  selectConstrain,
+  selectLowerConstraintID,
+  selectUpperConstraintID,
+  uiActions,
+} from '../store/ui-slice';
+import { selectAspectRatios } from '../store/config-slice';
+
 import useClientRect from '../hooks/use-client-rect';
 
 const stylesFromRect = (rect: Rect): CSSProperties => ({
@@ -35,16 +43,31 @@ const ImageViewer: React.FC = () => {
 
   const dispatch = useAppDispatch();
   const [imageViewerRef, clientRect] = useClientRect();
-  const { filePath, isValid, imageRect, essentialRect } = useAppSelector(
+  const { filePath, imageRect, essentialRect } = useAppSelector(
     selectCurrentImage
   );
+  const constrain = useAppSelector(selectConstrain);
+  const aspectRatios = useAppSelector(selectAspectRatios);
+  let lowerConstraintID = useAppSelector(selectLowerConstraintID);
+  let upperConstraintID = useAppSelector(selectUpperConstraintID);
 
   const imageUrl = pathToUrl(filePath);
 
-  // do we have a valid image and rect to draw it in?
-  const ready = isValid && !rectEmpty(clientRect);
+  useEffect(() => {}, [constrain, lowerConstraintID, upperConstraintID]);
 
-  if (ready && clientRect && imageRect && essentialRect) {
+  useEffect(() => {
+    // presuming imageRect changes iff we get a new image
+    if (!essentialRect && imageRect) {
+      dispatch(currentImageActions.setEssentialRect(imageRect));
+    }
+  }, [imageRect, essentialRect, dispatch]);
+
+  // we can determine where image should be placed until we have clientrect
+  // and an image rect.  We can't draw the crop until we have an essentialRect.
+  const drawCropWrapper = imageRect && !rectEmpty(clientRect);
+  const drawCrop = drawCropWrapper && essentialRect;
+
+  if (drawCropWrapper) {
     cropWrapperRect = fitRect(imageRect, imageRect, clientRect);
     cropWrapperStyles = stylesFromRect(cropWrapperRect);
     cropWrapperStyles = {
@@ -55,7 +78,9 @@ const ImageViewer: React.FC = () => {
     cropStyles = {
       height: `${cropWrapperRect.height}px`,
     };
+  }
 
+  if (drawCrop) {
     essentialRectClient = imageToClientRect(
       imageRect,
       cropWrapperRect,
@@ -96,15 +121,19 @@ const ImageViewer: React.FC = () => {
   return (
     <div className="image-viewer">
       <div className="image-viewer-inner" ref={imageViewerRef}>
-        <div style={cropWrapperStyles}>
-          <ReactCrop
-            src={imageUrl}
-            crop={crop}
-            onChange={onCropChange}
-            style={cropStyles}
-            imageStyle={cropImageStyles}
-          />
-        </div>
+        {drawCropWrapper && (
+          <div style={cropWrapperStyles}>
+            {drawCrop && (
+              <ReactCrop
+                src={imageUrl}
+                crop={crop}
+                onChange={onCropChange}
+                style={cropStyles}
+                imageStyle={cropImageStyles}
+              />
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

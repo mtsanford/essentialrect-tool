@@ -61,7 +61,7 @@ export default function App() {
     <SplitterLayout
       customClassName="imgjoy-splitter-layout"
       primaryMinSize={240}
-      secondaryMinSize={350}
+      secondaryMinSize={650}
     >
       <div className="left-panel">
         <Controls onAction={actionHandler} />

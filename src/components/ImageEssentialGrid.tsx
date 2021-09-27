@@ -12,7 +12,7 @@ import { selectCurrentImage } from '../store/current-image-slice';
 const ImageEssentialGrid: React.FC = () => {
   const aspectRatios = useAppSelector(selectAspectRatios);
   const previewColumns = useAppSelector(selectPreviewColumns);
-  const { filePath, isValid, essentialRect, imageRect } = useAppSelector(
+  const { filePath, essentialRect, imageRect } = useAppSelector(
     selectCurrentImage
   );
 
@@ -27,7 +27,6 @@ const ImageEssentialGrid: React.FC = () => {
     <div className={classes}>
       {aspectRatios.map((aspectRatioInfo) => (
         <ImageEssentialPreview
-          isValid={isValid}
           imageUrl={imageUrl}
           essentialRect={essentialRect}
           imageRect={imageRect}

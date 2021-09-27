@@ -49,8 +49,7 @@ const ImageEssentialPreview: React.FC<{
   imageUrl?: string;
   imageRect?: Rect;
   essentialRect?: Rect;
-  isValid: boolean;
-}> = ({ aspectRatioInfo, imageUrl, imageRect, essentialRect, isValid }) => {
+}> = ({ aspectRatioInfo, imageUrl, imageRect, essentialRect }) => {
   let imageStyles;
   let contentStyles = {};
   let orientationClass;
@@ -62,7 +61,7 @@ const ImageEssentialPreview: React.FC<{
   const { aspectRatio, name: aspectName, ratioText } = aspectRatioInfo;
   const landscape = aspectRatio >= 1;
   const renderContainer = !rectEmpty(clientRect);
-  const renderImage = renderContainer && isValid;
+  const renderImage = renderContainer && imageRect;
 
   ({ imageContainerRect, borderSize } = calcImageContainerRect(
     clientRect,
@@ -117,7 +116,7 @@ const ImageEssentialPreview: React.FC<{
   if (renderImage) {
     const renderedImageRect = fitRect(
       imageRect,
-      essentialRect,
+      essentialRect || imageRect,
       imageContainerRect
     );
 
