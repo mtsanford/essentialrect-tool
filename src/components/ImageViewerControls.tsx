@@ -89,21 +89,35 @@ const ImageViewerControls: React.FC = () => {
         />
       </HappyButton>
 
-      <select value={lowerConstraintID} onChange={lowerConstraintChanged}>
-        {lowerSelectValues.map((ar) => (
-          <option value={ar.id} key={ar.id}>
-            {ar.text}
-          </option>
-        ))}
-      </select>
+      <div>
+        <label htmlFor="min-aspect-ratio">min target aspect ratio</label>
+        <select
+          id="min-aspect-ratio"
+          value={lowerConstraintID}
+          onChange={lowerConstraintChanged}
+        >
+          {lowerSelectValues.map((ar) => (
+            <option value={ar.id} key={ar.id}>
+              {ar.text}
+            </option>
+          ))}
+        </select>
+      </div>
 
-      <select value={upperConstraintID} onChange={upperConstraintChanged}>
-        {upperSelectValues.map((ar) => (
-          <option value={ar.id} key={ar.id}>
-            {ar.text}
-          </option>
-        ))}
-      </select>
+      <div>
+        <label htmlFor="max-aspect-ratio">min target aspect ratio</label>
+        <select
+          id="max-aspect-ratio"
+          value={upperConstraintID}
+          onChange={upperConstraintChanged}
+        >
+          {upperSelectValues.map((ar) => (
+            <option value={ar.id} key={ar.id}>
+              {ar.text}
+            </option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 };

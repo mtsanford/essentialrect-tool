@@ -138,6 +138,23 @@ a:hover {
   padding: 0.6em;
 }
 
+.image-viewer-controls div:nth-child(2) {
+  margin-left: 1em;
+}
+
+.image-viewer-controls label {
+  display:block;
+  font-size: 0.8em;
+  margin-bottom: 0.2em;
+}
+
+.image-viewer-controls select {
+  margin-left: 0.5em;
+  padding: 0.1em;
+  width: 18em;
+}
+
+/* ----------- */
 
 .image-viewer-info {
   flex-grow: 0;
